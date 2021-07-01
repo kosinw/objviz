@@ -39,7 +39,7 @@ const config: Partial<GraphConfiguration<GraphNode, GraphLink>> = {
     highlightColor: "SAME",
     highlightFontSize: 12,
     highlightFontWeight: "bold",
-    highlightStrokeColor: "blue",
+    highlightStrokeColor: "#3291FF",
     highlightStrokeWidth: "SAME",
     // labelProperty: "name",
     mouseCursor: "pointer",
