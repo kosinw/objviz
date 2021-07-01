@@ -1,0 +1,42 @@
+.SidebarLayoutContainer {
+  padding: 16pt;
+  height: 100%;
+  display: block;
+  box-sizing: border-box
+}
+
+.SidebarLayout {
+  flex-direction: column;
+  display: flex;
+  height: 100%;
+  max-width: 550px;
+  margin: 0 auto;
+}
+
+.SidebarCollapseGroup {
+  width: 100% !important;
+}
+
+.SidebarCollapseGroupContainer {
+  overflow: hidden auto;
+  height: 100%;
+  padding: 0 !important;
+}
+
+.SidebarCollapseGroupContainer::-webkit-scrollbar {
+  width: 0px;
+  background-color: transparent;
+}
+
+.SidebarLayoutTop {
+  height: 100%;
+}
+
+.SidebarInspectCollapseContainerWrapper {
+  flex: 0 auto;
+  margin-top: 32pt;
+}
+
+.SubtitleContainer {
+  text-align: center;
+}

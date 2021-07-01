@@ -1,0 +1,34 @@
+.ViewerLayout {
+  background-image: radial-gradient(rgb(51, 51, 51) 1px, transparent 0px),
+    radial-gradient(rgb(34, 34, 34) 1px, transparent 0px);
+  background-position: 0px 0px, 25px 25px;
+  background-attachment: fixed;
+  background-size: 50px 50px;
+  width: 100%;
+  height: 100%;
+  padding: 16pt;
+  box-sizing: border-box;
+}
+
+.ViewerInactiveCover {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.2);
+  margin: -16pt;
+}
+
+.ViewerInactiveCoverSubtitle {
+  margin: 0;
+}
+
+.ViewerCanvasComponentContainer {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  margin: -16pt;
+}

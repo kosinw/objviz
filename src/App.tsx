@@ -1,26 +1,32 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import * as React from "react";
+import { GeistProvider, CssBaseline } from "@geist-ui/react";
+import { QueryClient, QueryClientProvider } from "react-query";
 
-function App() {
+import "./app.css";
+import "inter-ui/inter.css";
+
+
+import MainLayout from "./components/MainLayout";
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      suspense: true,
+    },
+  },
+});
+
+function Application() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <React.StrictMode>
+      <GeistProvider themeType="dark">
+        <CssBaseline />
+        <QueryClientProvider client={queryClient}>
+          <MainLayout />
+        </QueryClientProvider>
+      </GeistProvider>
+    </React.StrictMode>
   );
 }
 
-export default App;
+export default Application;

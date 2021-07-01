@@ -1,0 +1,22 @@
+.MainLayoutContainer {
+    height: 100vh;
+    width: 100vw;
+    margin: 0;
+    padding: 0;
+}
+
+.MainLayoutContentContainer {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.MainLayoutTopbarContainer {
+    flex: none
+}
+
+.MainLayoutViewerContainer {
+    flex: 1 1 auto;
+    width: 100%;
+    height: 100%;
+}
