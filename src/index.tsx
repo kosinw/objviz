@@ -1,5 +1,5 @@
 import ReactDOM from "react-dom";
-import Application from "./Application";
+import Application from "./App";
 import reportWebVitals from "./reportWebVitals";
 
 // TODO(kosi): Add a light/dark switch to toggle between the two modes
