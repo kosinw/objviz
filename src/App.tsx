@@ -2,9 +2,8 @@ import * as React from "react";
 import { GeistProvider, CssBaseline } from "@geist-ui/react";
 import { QueryClient, QueryClientProvider } from "react-query";
 
-import "./app.css";
+import "./App.css";
 import "inter-ui/inter.css";
-
 
 import MainLayout from "./components/MainLayout";
 
