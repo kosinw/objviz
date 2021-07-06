@@ -14,7 +14,7 @@ export interface SidebarQueryCollapseFormProps {
 // TODO(kosi): Add schema validation to form
 // TODO(kosi): Handle form submission
 const SidebarQueryCollapseForm: React.FC<SidebarQueryCollapseFormProps> = ({
-  defaultValues = { type: "", id: "" },
+  defaultValues = { type: "account", id: "" },
 }) => {
   const {
     register,
@@ -23,17 +23,27 @@ const SidebarQueryCollapseForm: React.FC<SidebarQueryCollapseFormProps> = ({
   } = useForm({ mode: "onChange", defaultValues });
   const [, setToast] = useToasts();
 
-  const onSubmit: SubmitHandler<SidebarQueryCollapseFormData> = (data) => {
-    setToast({ text: `Form submission: ${JSON.stringify(data)}` });
+  // TODO(kosi): Replace this with a real form submission function
+  const onSubmit: SubmitHandler<SidebarQueryCollapseFormData> = async (
+    data
+  ) => {
+    await new Promise((resolve) =>
+      setTimeout(() => {
+        setToast({ text: `Form submission: ${JSON.stringify(data)}` });
+        resolve(null);
+      }, 1000)
+    );
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Grid.Container gap={2} direction="column">
         <Grid xs>
+          {/* TODO(kosi): Remove disabled and make this a dropdown instead of an input */}
           <Input
             status={!!errors.type ? "error" : "default"}
             width="100%"
+            readOnly
             placeholder="Enter type of object..."
             {...register("type")}
           >
@@ -52,6 +62,7 @@ const SidebarQueryCollapseForm: React.FC<SidebarQueryCollapseFormProps> = ({
         </Grid>
         <Grid justify="center" xs>
           <Button
+            loading={isSubmitting}
             disabled={!isValid || isSubmitting || !isDirty}
             style={{ width: "100%", marginTop: 10 }}
             htmlType="submit"

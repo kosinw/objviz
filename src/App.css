@@ -1,7 +1,7 @@
 .Resizer {
   background: #fff;
   opacity: 0.2;
-  z-index: 1;
+  z-index: 99;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
@@ -16,8 +16,9 @@
 }
 
 .Resizer.vertical {
-  width: calc(8px + 1.1pt);
-  margin: 0 -6px 0 0;
+  min-width: 9px;
+  margin: 0 -4px 0 0;
+  box-sizing: border-box;
   border-left: 4px solid rgba(255, 255, 255, 0);
   border-right: 4px solid rgba(255, 255, 255, 0);
   cursor: col-resize;

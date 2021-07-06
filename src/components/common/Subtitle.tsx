@@ -16,7 +16,7 @@ const Subtitle: React.FC<SubtitleProps> = ({
   value = "Database Object Visualizer",
 }) => {
   return (
-    <Text type="secondary" className={styles.Subtitle}>
+    <Text span type="secondary" className={styles.Subtitle}>
       {value}
     </Text>
   );

@@ -4,12 +4,15 @@ import {
   GraphConfiguration,
   GraphData,
   GraphLink,
-  GraphNode,
 } from "react-d3-graph";
+
+import seedrandom from "seedrandom";
+
+import produce from "immer";
 
 import styles from "./Viewer.module.css";
 
-const config: Partial<GraphConfiguration<GraphNode, GraphLink>> = {
+const config: Partial<GraphConfiguration<any, GraphLink>> = {
   automaticRearrangeAfterDropNode: false,
   collapsible: false,
   directed: false,
@@ -41,7 +44,7 @@ const config: Partial<GraphConfiguration<GraphNode, GraphLink>> = {
     highlightFontWeight: "bold",
     highlightStrokeColor: "#3291FF",
     highlightStrokeWidth: "SAME",
-    // labelProperty: "name",
+    labelProperty: "label",
     mouseCursor: "pointer",
     opacity: 1,
     renderLabel: true,
@@ -74,16 +77,30 @@ const config: Partial<GraphConfiguration<GraphNode, GraphLink>> = {
 };
 
 export interface ViewerCanvasComponentProps {
-  data: GraphData<GraphNode, GraphLink>;
+  data: GraphData<any, GraphLink>;
 }
 
 const ViewerCanvasComponent: React.FC<ViewerCanvasComponentProps> = ({
   data,
 }) => {
   const ref = React.useRef<HTMLDivElement>(null);
+  
+  // NOTE(kosi): Seeded random generator is used to figure out initial node positions
+  const prng = seedrandom("openx");
+
   const [dimensions, setDimensions] = React.useState({
     width: 400,
     height: 400,
+  });
+
+  const newData = produce(data, (draft) => {
+    draft.nodes = draft.nodes.map((x) => {
+      return {
+        ...x,
+        x: prng() * (dimensions.width - 40) + 20,
+        y: prng() * (dimensions.width - 40) + 20,
+      };
+    });
   });
 
   const updateSize = () => {
@@ -105,7 +122,7 @@ const ViewerCanvasComponent: React.FC<ViewerCanvasComponentProps> = ({
   return (
     <div ref={ref} className={styles.ViewerCanvasComponentContainer}>
       <Graph
-        data={data}
+        data={newData}
         id="ox-graph-canvas"
         config={Object.assign({}, config, { ...dimensions })}
       />
