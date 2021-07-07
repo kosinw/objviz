@@ -15,6 +15,18 @@
   transition: all 2s ease;
 }
 
+.Resizer.ResizerLight.vertical {
+  background: #000;
+  opacity: 1;
+  border-left: 4px solid rgba(255, 255, 255, 1);
+  border-right: 4px solid rgba(255, 255, 255, 1);
+}
+
+.Resizer.ResizerLight.vertical:hover {
+  border-left: 4px solid rgba(255, 255, 255, 0.9);
+  border-right: 4px solid rgba(255, 255, 255, 0.9);
+}
+
 .Resizer.vertical {
   min-width: 9px;
   margin: 0 -4px 0 0;

@@ -1,6 +1,8 @@
 import * as React from "react";
-import { Grid, Text, Dot } from "@geist-ui/react";
+import { Grid } from "@geist-ui/react";
 import { QuestionCircle, Settings } from "@geist-ui/react-icons";
+
+import TopbarStatusIndicator from "./TopbarStatusIndicator";
 
 const TopbarRightGroup: React.FC = () => {
   return (
@@ -11,11 +13,7 @@ const TopbarRightGroup: React.FC = () => {
         md
         xs={0}
       >
-        <Dot>
-          <Text type="secondary" small>
-            Disconnected
-          </Text>
-        </Dot>
+        <TopbarStatusIndicator />
       </Grid>
       <Grid style={{ display: "flex" }} alignItems="center" md xs={0}>
         <Settings size={20} />

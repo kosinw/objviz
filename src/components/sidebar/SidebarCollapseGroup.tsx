@@ -8,6 +8,7 @@ import SidebarSQLCollapseDisplay from "./SidebarSQLCollapseDisplay";
 const SidebarQueryCollapseContainer: React.FC = () => {
   return (
     <Collapse
+      initialVisible={true}
       title="Query"
       subtitle={
         <Text small>

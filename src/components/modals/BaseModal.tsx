@@ -11,7 +11,7 @@ export interface SharedModalProps {
   };
 }
 
-export type BaseModalProps = { children: JSX.Element[] } & SharedModalProps;
+export type BaseModalProps = { children: JSX.Element[] | JSX.Element } & SharedModalProps;
 
 const BaseModal: React.FC<BaseModalProps> = ({ children, bindings }) => {
   return (

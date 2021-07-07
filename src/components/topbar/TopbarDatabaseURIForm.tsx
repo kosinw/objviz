@@ -1,28 +1,24 @@
 import * as React from "react";
 import { Input } from "@geist-ui/react";
 import { ArrowRight } from "@geist-ui/react-icons";
-import { useModal } from "@geist-ui/react";
 
 import styles from "./Topbar.module.css";
-import WelcomeModal from "../modals/WelcomeModal";
+import { useURIStore } from "../../data/uri.store";
 
 const TopbarDatabaseURIForm: React.FC = () => {
-  const { setVisible, bindings } = useModal();
+  const [currentRecord] = useURIStore((state) => [state.currentRecord]);
 
   return (
-    <>
-      <Input
-        className={styles.TopbarDatabaseURIForm}
-        placeholder="Enter PostgreSQL database URI..."
-        label="Database URI"
-        width="100%"
-        iconClickable
-        clearable
-        onIconClick={() => setVisible(true)}
-        iconRight={<ArrowRight />}
-      />
-      <WelcomeModal setVisible={setVisible} bindings={bindings} />
-    </>
+    <Input
+      className={styles.TopbarDatabaseURIForm}
+      placeholder="Enter PostgreSQL database URI..."
+      label="Database URI"
+      width="100%"
+      iconClickable
+      initialValue={!!currentRecord ? currentRecord : ""}
+      clearable
+      iconRight={<ArrowRight />}
+    />
   );
 };
 
