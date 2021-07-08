@@ -4,7 +4,20 @@ import { QuestionCircle, Settings } from "@geist-ui/react-icons";
 
 import TopbarStatusIndicator from "./TopbarStatusIndicator";
 
+import styled from "styled-components";
+import { useModalStore } from "../../data/modal";
+
+const QuestionCircleButton = styled(QuestionCircle)`
+  :hover {
+    cursor: pointer;
+  }
+`;
+
 const TopbarRightGroup: React.FC = () => {
+  const [showWelcomeModal] = useModalStore((store) => [
+    store.setWelcomeModalVisible,
+  ]);
+
   return (
     <Grid.Container gap={2} direction="row">
       <Grid
@@ -19,7 +32,10 @@ const TopbarRightGroup: React.FC = () => {
         <Settings size={20} />
       </Grid>
       <Grid style={{ display: "flex" }} alignItems="center" md xs={0}>
-        <QuestionCircle size={20} />
+        <QuestionCircleButton
+          onClick={() => !!showWelcomeModal && showWelcomeModal(true)}
+          size={20}
+        />
       </Grid>
     </Grid.Container>
   );

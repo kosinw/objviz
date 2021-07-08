@@ -1,0 +1,1 @@
+export type ImmerSetter<T> = (fn: (state: T) => void) => void;

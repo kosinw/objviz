@@ -1,38 +1,21 @@
 import * as React from "react";
 
-import { Modal, Text, Input, Checkbox, useToasts } from "@geist-ui/react";
+import { Modal, Text, Input, Checkbox } from "@geist-ui/react";
 import { ArrowRight } from "@geist-ui/react-icons";
 import type { CheckboxEvent } from "@geist-ui/react/dist/checkbox/checkbox";
 
-import { useQueryClient } from "react-query";
-import { useForm } from "react-hook-form";
-import type { SubmitHandler } from "react-hook-form";
-
 import BaseModal, { SharedModalProps } from "./BaseModal";
-import { useURIStore, useURIHistoryStore } from "../../data/uri.store";
-import { verifyURI } from "../../api/uri.api";
-
-export type WelcomeModalFormData = {
-  databaseURI: string;
-};
+import { useURIStore, useURIHistoryStore } from "../../data/uri";
+import { UseURIFormData, useURIForm } from "../../hooks/uriForm";
 
 const WelcomeModal: React.FC<SharedModalProps> = ({ setVisible, bindings }) => {
-  const defaultValues: WelcomeModalFormData = { databaseURI: "" };
-
-  const [, setToast] = useToasts();
-
-  const { register, handleSubmit } = useForm({
-    mode: "onChange",
-    defaultValues,
-  });
-
-  const queryClient = useQueryClient();
-
   const [showFirstTimeModal, setURIHistoryStore] = useURIHistoryStore(
     (store) => [store.showFirstTimeModal, store.set]
   );
 
-  const [setURIStore] = useURIStore((store) => [store.set]);
+  const [currentRecord] = useURIStore((store) => [store.currentRecord]);
+
+  const defaultValues: UseURIFormData = { databaseURI: currentRecord || "" };
 
   const handleCheckboxChange: React.Dispatch<CheckboxEvent> = (e) => {
     setURIHistoryStore((draft) => {
@@ -40,29 +23,10 @@ const WelcomeModal: React.FC<SharedModalProps> = ({ setVisible, bindings }) => {
     });
   };
 
-  const handleFormSubmit: SubmitHandler<WelcomeModalFormData> = async (
-    data
-  ) => {
-    const result = await verifyURI(data.databaseURI);
-
-    queryClient.setQueryData(["verifyURI", { uri: data.databaseURI }], result);
-
-    if (result) {
-      setURIStore((draft) => {
-        draft.currentRecord = data.databaseURI;
-      });
-
-      setURIHistoryStore((draft) => {
-        draft.records = [data.databaseURI, ...draft.records];
-      });
-
-      setToast({ text: `Successfully connected to database!` });
-
-      setVisible(false);
-    } else {
-      // TODO(kosi): Add error handling crap here
-    }
-  };
+  const { register, submit } = useURIForm({
+    defaultValues,
+    afterSuccess: () => setVisible(false),
+  });
 
   return (
     <BaseModal bindings={bindings} setVisible={setVisible}>
@@ -79,15 +43,16 @@ const WelcomeModal: React.FC<SharedModalProps> = ({ setVisible, bindings }) => {
             marginBottom: "1.2rem",
           }}
         >
-          It seems like this is your first time using this tool. Please enter a
-          PostgreSQL URI to connect to the database. This tool displays database
-          objects and their relationships through a network structure.
+          Please enter a PostgreSQL URI to connect to the database. This tool
+          displays database objects and their relationships through a network
+          structure.
         </Text>
         <Input
           iconClickable
-          {...register("databaseURI")}
+          initialValue={currentRecord || ""}
+          {...register("databaseURI", { required: true })}
           iconRight={<ArrowRight />}
-          onIconClick={handleSubmit(handleFormSubmit)}
+          onIconClick={submit}
           width="100%"
           placeholder="Enter database URI..."
         />
@@ -97,16 +62,14 @@ const WelcomeModal: React.FC<SharedModalProps> = ({ setVisible, bindings }) => {
             onChange={handleCheckboxChange}
             size="medium"
           >
-            Don't show this message again.
+            Stop showing this message automatically.
           </Checkbox>
         </div>
       </Modal.Content>
       <Modal.Action passive onClick={() => setVisible(false)}>
-        Cancel
+        Close
       </Modal.Action>
-      <Modal.Action onClick={handleSubmit(handleFormSubmit)}>
-        Submit
-      </Modal.Action>
+      <Modal.Action onClick={submit}>Submit</Modal.Action>
     </BaseModal>
   );
 };

@@ -1,19 +1,20 @@
 import * as React from "react";
 import { Text, Dot } from "@geist-ui/react";
 
-import { useQuery } from "react-query";
-import { useURIStore } from "../../data/uri.store";
-import { verifyURI } from "../../api/uri.api";
+import styled from "styled-components";
+
+import { useVerifyURI } from "../../hooks/verifyURI";
+import { useDisconnect } from "../../hooks/disconnect";
+
+const HoverableDot = styled(Dot)`
+  :hover {
+    cursor: pointer;
+  }
+`;
 
 const TopbarStatusIndicator: React.FC = () => {
-  const [currentRecord, setURIStore] = useURIStore((store) => [
-    store.currentRecord,
-    store.set,
-  ]);
-  const { isLoading, data } = useQuery(
-    ["verifyURI", { uri: currentRecord }],
-    () => verifyURI(currentRecord)
-  );
+  const { disconnect } = useDisconnect();
+  const { data, isLoading } = useVerifyURI();
 
   const [text, textColor, dotColor]: [
     string,
@@ -37,21 +38,14 @@ const TopbarStatusIndicator: React.FC = () => {
     );
   }
 
+  const DotComponent = data ? HoverableDot : Dot;
+
   return (
-    <Dot
-      onClick={() => {
-        if (data) {
-          setURIStore((draft) => {
-            draft.currentRecord = null;
-          });
-        }
-      }}
-      type={dotColor}
-    >
+    <DotComponent onClick={() => data && disconnect()} type={dotColor}>
       <Text type={textColor} small>
         {text}
       </Text>
-    </Dot>
+    </DotComponent>
   );
 };
 

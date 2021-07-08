@@ -2,10 +2,9 @@ import create from "zustand";
 import { persist } from "zustand/middleware";
 
 import produce from "immer";
+import { ImmerSetter } from "./common";
 
 export type URIHistoryRecord = string;
-
-type ImmerSetter<T> = (fn: (state: T) => void) => void;
 
 export type URIHistoryState = {
   records: URIHistoryRecord[];
@@ -26,7 +25,7 @@ export const useURIHistoryStore = create<URIHistoryState>(
       set: (fn) => set(produce(fn)),
     }),
     {
-      name: "uri-history",
+      name: "uri-history-store",
       getStorage: () => localStorage,
     }
   )
@@ -39,7 +38,7 @@ export const useURIStore = create<URIState>(
       set: (fn) => set(produce(fn)),
     }),
     {
-      name: "current-uri",
+      name: "uri-store",
       getStorage: () => sessionStorage,
     }
   )

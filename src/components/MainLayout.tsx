@@ -8,20 +8,28 @@ import TopbarLayout from "./topbar/TopbarLayout";
 import ViewerLayout from "./viewer/ViewerLayout";
 import WelcomeModal from "./modals/WelcomeModal";
 
-import { useURIHistoryStore } from "../data/uri.store";
+import { useURIHistoryStore, useURIStore } from "../data/uri";
+import { useModalStore } from "../data/modal";
 
 const MainLayout: React.FC = () => {
-  const [records, showFirstTimeModal] = useURIHistoryStore((store) => [
-    store.records,
+  const [showFirstTimeModal] = useURIHistoryStore((store) => [
     store.showFirstTimeModal,
   ]);
+
+  const [currentRecord] = useURIStore((store) => [store.currentRecord]);
+
+  const [setModalStore] = useModalStore((store) => [store.set]);
 
   const theme = useTheme();
 
   const { setVisible, bindings } = useModal();
 
   React.useEffect(() => {
-    setVisible(showFirstTimeModal && records.length === 0);
+    setVisible(showFirstTimeModal && !currentRecord);
+
+    setModalStore((draft) => {
+      draft.setWelcomeModalVisible = (visibility) => setVisible(visibility);
+    });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -30,7 +38,9 @@ const MainLayout: React.FC = () => {
     <>
       <section className={styles.MainLayoutContainer}>
         <SplitPane
-          resizerClassName={theme.type === "light" ? "Resizer ResizerLight" : "Resizer"}
+          resizerClassName={
+            theme.type === "light" ? "Resizer ResizerLight" : "Resizer"
+          }
           minSize={360}
           maxSize={820}
           split="vertical"

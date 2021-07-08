@@ -7,12 +7,11 @@ import {
 } from "react-d3-graph";
 
 import seedrandom from "seedrandom";
-
 import produce from "immer";
 
 import styles from "./Viewer.module.css";
 
-const config: Partial<GraphConfiguration<any, GraphLink>> = {
+const config: Partial<GraphConfiguration<any, GraphLink>> & any = {
   automaticRearrangeAfterDropNode: false,
   collapsible: false,
   directed: false,
@@ -76,15 +75,24 @@ const config: Partial<GraphConfiguration<any, GraphLink>> = {
   },
 };
 
+export type ViewerGraphNode = {
+  id: string;
+  type: string;
+  label: string;
+  [x: string]: any;
+};
+
+export type ViewerGraphFormat = GraphData<ViewerGraphNode, GraphLink>;
+
 export interface ViewerCanvasComponentProps {
-  data: GraphData<any, GraphLink>;
+  data: ViewerGraphFormat;
 }
 
 const ViewerCanvasComponent: React.FC<ViewerCanvasComponentProps> = ({
   data,
 }) => {
   const ref = React.useRef<HTMLDivElement>(null);
-  
+
   // NOTE(kosi): Seeded random generator is used to figure out initial node positions
   const prng = seedrandom("openx");
 
