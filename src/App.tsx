@@ -19,7 +19,7 @@ const queryClient = new QueryClient();
 
 function Application() {
   return (
-    <React.StrictMode>
+    // <React.StrictMode>
       <GeistProvider themeType="dark">
         <CssBaseline />
         <QueryClientProvider client={queryClient}>
@@ -27,7 +27,7 @@ function Application() {
           <ReactQueryDevtools />
         </QueryClientProvider>
       </GeistProvider>
-    </React.StrictMode>
+    // </React.StrictMode>
   );
 }
 

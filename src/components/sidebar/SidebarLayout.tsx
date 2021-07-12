@@ -4,13 +4,18 @@ import { Grid, Collapse, Text } from "@geist-ui/react";
 import styles from "./Sidebar.module.css";
 import Subtitle from "../common/Subtitle";
 import SidebarCollapseGroup from "./SidebarCollapseGroup";
+import SidebarInspectCollapseTable from "./SidebarInspectCollapseTable";
 
 const SidebarInspectCollapseContainer: React.FC = () => {
   return (
     <Collapse
+      initialVisible
+      className={styles.SidebarInspectCollapseContainer}
       title="Inspect"
       subtitle={<Text small>Click on any object for more information.</Text>}
-    ></Collapse>
+    >
+      <SidebarInspectCollapseTable />
+    </Collapse>
   );
 };
 

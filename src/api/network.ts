@@ -19,7 +19,6 @@ export type GetNetworkRequest = {
   uri: string;
 };
 
-// TODO(kosi): Throw errors if necessary
 export const getNetwork = async (
   params: GetNetworkRequest | null
 ): Promise<GetNetworkResponse | null> => {

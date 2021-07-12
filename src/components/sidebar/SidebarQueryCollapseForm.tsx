@@ -17,7 +17,7 @@ export interface SidebarQueryCollapseFormProps {
 
 // TODO(kosi): Add schema validation to form
 const SidebarQueryCollapseForm: React.FC<SidebarQueryCollapseFormProps> = ({
-  defaultValues = { type: "account" },
+  defaultValues = { type: "adunitgroup" },
 }) => {
   const {
     register,
@@ -51,7 +51,10 @@ const SidebarQueryCollapseForm: React.FC<SidebarQueryCollapseFormProps> = ({
 
     queryClient.setQueryData(["getNetwork", params], response);
 
-    setToast({ type: "success", text: "Success: Visualization query was successful!" })
+    setToast({
+      type: "success",
+      text: "Success: Visualization query was successful!",
+    });
 
     // await new Promise((resolve) =>
     //   setTimeout(() => {

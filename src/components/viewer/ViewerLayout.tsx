@@ -8,6 +8,8 @@ import ViewerCanvasComponent, {
   ViewerGraphFormat,
   ViewerGraphNode,
 } from "./ViewerCanvasComponent";
+import ViewerControlsCard from "./ViewerControlsCard";
+
 import { GraphLink } from "react-d3-graph";
 
 import { useVerifyURI } from "../../hooks/verifyURI";
@@ -15,16 +17,22 @@ import { useNetworkData } from "../../hooks/networkData";
 import { GetNetworkResponse } from "../../api/network";
 
 const mapNetworkInfoToViewerFormat = (
-  network: GetNetworkResponse
+  network: GetNetworkResponse | undefined | null
 ): ViewerGraphFormat => {
   const nodes: ViewerGraphNode[] = [];
   const links: GraphLink[] = [];
+
+  if (!network) {
+    return { nodes, links };
+  }
 
   for (const key in network) {
     nodes.push({
       id: key,
       type: network[key].type,
-      label: `${network[key].type} (${network[key].id})`,
+      dbid: network[key].id,
+      color: key === "1" ? "#7928CA" : "#fff",
+      fontColor: key === "1" ? "#7928CA" : "#fff",
     });
 
     for (let i = 0; i < network[key].pointers_from.length; ++i) {
@@ -47,6 +55,11 @@ const ViewerLayout: React.FC = () => {
     data: networkInfo,
   } = useNetworkData();
 
+  const finalData = React.useMemo(
+    () => mapNetworkInfoToViewerFormat(networkInfo),
+    [networkInfo]
+  );
+
   if (!isAvailable || isNetworkLoading || !networkInfo) {
     return (
       <div
@@ -65,19 +78,6 @@ const ViewerLayout: React.FC = () => {
             subtitle="Enter object information under Query to visualize that object."
           />
         )}
-        {/* <ViewerCanvasComponent
-          data={{
-            nodes: [
-              { id: "1500003", type: "adunit", label: "adunit (1500003)" },
-              { id: "189888", type: "account", label: "account (189888)" },
-              { id: "178725", type: "network", label: "network (178725)" },
-            ],
-            links: [
-              { source: "1500003", target: "189888" },
-              { source: "178725", target: "189888" },
-            ],
-          }}
-        /> */}
       </div>
     );
   }
@@ -88,7 +88,8 @@ const ViewerLayout: React.FC = () => {
         theme.type === "light" ? styles.ViewerLayoutLight : ""
       }`}
     >
-      <ViewerCanvasComponent data={mapNetworkInfoToViewerFormat(networkInfo)} />
+      <ViewerCanvasComponent data={finalData} />
+      <ViewerControlsCard />
     </div>
   );
 };

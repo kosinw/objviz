@@ -13,7 +13,6 @@ export type VerifyURIResponse = {
   };
 };
 
-// TODO(kosi): Throw errors if necessary
 export const verifyURI = async (uri: string | null): Promise<boolean> => {
   if (!uri) {
     return false;

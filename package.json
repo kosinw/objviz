@@ -1,5 +1,5 @@
 {
-  "name": "@objviz/web",
+  "name": "@openx/objviz",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -7,9 +7,8 @@
     "@geist-ui/react-icons": "^1.0.1",
     "@types/node": "^12.0.0",
     "@types/react": "^17.0.0",
-    "@types/react-d3-graph": "^2.6.0",
+    "@types/react-d3-graph": "^2.6.1",
     "@types/react-dom": "^17.0.0",
-    "@types/seedrandom": "^3.0.1",
     "@types/styled-components": "^5.1.11",
     "axios": "^0.21.1",
     "d3": "5.5.0",
@@ -23,13 +22,12 @@
     "react-query": "^3.18.1",
     "react-scripts": "4.0.3",
     "react-split-pane": "^0.1.92",
-    "seedrandom": "^3.0.5",
     "styled-components": "^5.3.0",
     "typescript": "^4.1.2",
     "web-vitals": "^1.0.1",
     "zustand": "^3.5.5"
   },
-  "proxy": "https://67ab908e-d2f5-4275-a790-7038e7392805.mock.pstmn.io",
+  "proxy": "http://localhost:8234",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

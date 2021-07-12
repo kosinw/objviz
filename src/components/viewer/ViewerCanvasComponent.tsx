@@ -1,3 +1,4 @@
+import produce from "immer";
 import * as React from "react";
 import {
   Graph,
@@ -6,79 +7,72 @@ import {
   GraphLink,
 } from "react-d3-graph";
 
-import seedrandom from "seedrandom";
-import produce from "immer";
-
 import styles from "./Viewer.module.css";
 
+import { useSelectedStore } from "../../data/selection";
+
 const config: Partial<GraphConfiguration<any, GraphLink>> & any = {
-  automaticRearrangeAfterDropNode: false,
+  automaticRearrangeAfterDropNode: true,
   collapsible: false,
-  directed: false,
-  focusAnimationDuration: 0.75,
-  focusZoom: 1,
+  directed: true,
   highlightDegree: 1,
   highlightOpacity: 1,
+  nodeHighlightBehavior: true,
   linkHighlightBehavior: true,
   maxZoom: 8,
-  minZoom: 0.25,
-  nodeHighlightBehavior: true,
+  minZoom: 0.5,
   panAndZoom: false,
+  staticGraphWithDragAndDrop: false,
   staticGraph: false,
-  staticGraphWithDragAndDrop: true,
   d3: {
     alphaTarget: 0.05,
-    gravity: -400,
-    linkLength: 180,
+    gravity: -200,
+    linkLength: 200,
     linkStrength: 1,
-    disableLinkForce: true,
+    // disableLinkForce: false,
   },
   node: {
     color: "#fff",
     fontColor: "#fff",
-    fontSize: 12,
+    fontSize: 10,
     fontWeight: "normal",
     highlightColor: "SAME",
-    highlightFontSize: 12,
+    highlightFontSize: 10,
     highlightFontWeight: "bold",
     highlightStrokeColor: "#3291FF",
     highlightStrokeWidth: "SAME",
-    labelProperty: "label",
+    labelProperty: (node: ViewerGraphNode) => `${node.type} (${node.dbid})`,
     mouseCursor: "pointer",
     opacity: 1,
     renderLabel: true,
-    size: 500,
+    size: 400,
     strokeColor: "none",
     strokeWidth: 2,
     svg: "",
     symbolType: "circle",
   },
   link: {
-    color: "#fff",
+    color: "#333",
     fontColor: "#fff",
     fontSize: 12,
     fontWeight: "normal",
     highlightColor: "#3291FF",
     highlightFontSize: 8,
     highlightFontWeight: "bold",
-    // labelProperty: "label",
     mouseCursor: "pointer",
     opacity: 1,
     renderLabel: true,
     semanticStrokeWidth: true,
-    strokeWidth: 1.5,
+    strokeWidth: 1,
     markerHeight: 6,
     markerWidth: 6,
-    // strokeDasharray: 0,
-    // strokeDashoffset: 0,
-    // strokeLinecap: "butt",
   },
 };
 
 export type ViewerGraphNode = {
   id: string;
   type: string;
-  label: string;
+  dbid: number;
   [x: string]: any;
 };
 
@@ -92,47 +86,103 @@ const ViewerCanvasComponent: React.FC<ViewerCanvasComponentProps> = ({
   data,
 }) => {
   const ref = React.useRef<HTMLDivElement>(null);
-
-  // NOTE(kosi): Seeded random generator is used to figure out initial node positions
-  const prng = seedrandom("openx");
+  const graphRef = React.useRef<any>(null);
 
   const [dimensions, setDimensions] = React.useState({
-    width: 400,
-    height: 400,
+    width: 1,
+    height: 1,
   });
 
-  const newData = produce(data, (draft) => {
-    draft.nodes = draft.nodes.map((x) => {
-      return {
-        ...x,
-        x: prng() * (dimensions.width - 40) + 20,
-        y: prng() * (dimensions.width - 40) + 20,
-      };
-    });
-  });
+  const [selectedNode, setSelectedNode] = useSelectedStore((store) => [
+    store.selected,
+    store.setSelected,
+  ]);
 
-  const updateSize = () => {
+  const [placedData, setPlacedData] = React.useState(
+    produce(data, (draft) => {
+      draft.nodes = draft.nodes.map((n) =>
+        Object.assign({}, n, {
+          x: n.x || Math.floor(Math.random() * (dimensions.width / 2)),
+          y: n.y || Math.floor(Math.random() * (dimensions.height / 2)),
+        })
+      );
+    })
+  );
+
+  const handleKeyPress = React.useCallback(
+    (e: KeyboardEvent) => {
+      if (e.repeat) {
+        return;
+      }
+
+      if (e.key === "r") {
+        setPlacedData(
+          produce((draft) => {
+            draft.nodes = draft.nodes.map((n) =>
+              Object.assign({}, n, {
+                x: n.x || Math.floor(Math.random() * (dimensions.width / 2)),
+                y: n.y || Math.floor(Math.random() * (dimensions.height / 2)),
+              })
+            );
+          })
+        );
+      }
+    },
+    // eslint-disable-next-line
+    [setPlacedData]
+  );
+
+  const updateSize = React.useCallback(() => {
     setDimensions({
-      width: ref.current?.offsetWidth || 400,
-      height: ref.current?.offsetHeight || 400,
+      width: ref.current?.clientWidth || 1,
+      height: ref.current?.clientHeight || 1,
     });
+  }, [ref]);
+
+  const handleNodeClick = (id: string) => {
+    setSelectedNode(id);
   };
 
-  React.useLayoutEffect(() => {
+  React.useEffect(() => {
     updateSize();
     window.addEventListener("resize", updateSize);
+    window.addEventListener("keydown", handleKeyPress);
 
     return () => {
       window.removeEventListener("resize", updateSize);
+      window.removeEventListener("keydown", handleKeyPress);
     };
-  }, [ref]);
+  }, [handleKeyPress, updateSize]);
+
+  const newConfig = React.useMemo(
+    () => Object.assign({}, config, { ...dimensions }),
+    [dimensions]
+  );
+
+  const finalData = React.useMemo(() => {
+    return produce(placedData, (draft) => {
+      const idx = draft.nodes.findIndex((n) => n.id === selectedNode);
+
+      if (idx !== -1) {
+        draft.nodes[idx].color = "#3291FF";
+        draft.nodes[idx].fontColor = "#3291FF";
+      }
+    });
+  }, [placedData, selectedNode]);
 
   return (
     <div ref={ref} className={styles.ViewerCanvasComponentContainer}>
       <Graph
-        data={newData}
+        onClickGraph={() => {
+          if (selectedNode !== "") {
+            setSelectedNode("");
+          }
+        }}
+        onClickNode={handleNodeClick}
+        ref={graphRef}
+        data={finalData}
         id="ox-graph-canvas"
-        config={Object.assign({}, config, { ...dimensions })}
+        config={newConfig}
       />
     </div>
   );

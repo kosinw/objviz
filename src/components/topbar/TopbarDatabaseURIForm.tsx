@@ -6,6 +6,7 @@ import styles from "./Topbar.module.css";
 import { useURIStore } from "../../data/uri";
 import { useURIForm, UseURIFormData } from "../../hooks/uriForm";
 
+// TODO(kosi): Add autocomplete functionality when searching for database URIs
 const TopbarDatabaseURIForm: React.FC = () => {
   const [currentRecord] = useURIStore((state) => [state.currentRecord]);
 
@@ -13,21 +14,21 @@ const TopbarDatabaseURIForm: React.FC = () => {
     databaseURI: currentRecord || "",
   };
 
-  const { register, submit, reset, getValues } = useURIForm({
+  const { register, submit, reset } = useURIForm({
     defaultValues,
   });
 
-  // NOTE(kosi): Reset topbar if its empty and loses focus
-  const handleBlur: React.Dispatch<React.FocusEvent> = (e) => {
-    const values = getValues();
-
-    if (values.databaseURI?.length === 0) {
-      reset({ databaseURI: currentRecord || "" });
+  React.useEffect(() => {
+    if (!currentRecord) {
+      reset({ databaseURI: "" });
+    } else {
+      reset({ databaseURI: currentRecord });
     }
-  };
+  }, [reset, currentRecord]);
 
   return (
     <Input
+      disabled={!!currentRecord}
       className={styles.TopbarDatabaseURIForm}
       placeholder="Enter PostgreSQL database URI..."
       label="Database URI"
@@ -36,7 +37,6 @@ const TopbarDatabaseURIForm: React.FC = () => {
       initialValue={!!currentRecord ? currentRecord : ""}
       {...register("databaseURI", { required: true })}
       onIconClick={submit}
-      onBlur={handleBlur}
       iconRight={<ArrowRight />}
     />
   );
