@@ -7,7 +7,7 @@ import styled from "styled-components";
 
 const StyledVisible = styled(Visible)`
   z-index: 99;
-  position: absolute;
+  position: fixed;
   bottom: 1.6rem;
   right: 1rem;
   width: auto !important;

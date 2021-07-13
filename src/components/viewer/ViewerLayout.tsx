@@ -16,6 +16,12 @@ import { useVerifyURI } from "../../hooks/verifyURI";
 import { useNetworkData } from "../../hooks/networkData";
 import { GetNetworkResponse } from "../../api/network";
 
+const truncate = (target: string, length: number) => {
+  return target.substring(0, length) + (length < target.length ? "..." : "");
+};
+
+// TODO(kosi): Move this logic inside ViewerCanvasComponent as layout should not deal with
+// logic like this.
 const mapNetworkInfoToViewerFormat = (
   network: GetNetworkResponse | undefined | null
 ): ViewerGraphFormat => {
@@ -31,6 +37,7 @@ const mapNetworkInfoToViewerFormat = (
       id: key,
       type: network[key].type,
       dbid: network[key].id,
+      name: truncate(network[key].name, 15),
       color: key === "1" ? "#7928CA" : "#fff",
       fontColor: key === "1" ? "#7928CA" : "#fff",
     });

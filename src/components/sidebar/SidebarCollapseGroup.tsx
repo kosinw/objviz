@@ -2,8 +2,10 @@ import * as React from "react";
 import { Collapse, Text } from "@geist-ui/react";
 
 import styles from "./Sidebar.module.css";
+
 import SidebarQueryCollapseForm from "./SidebarQueryCollapseForm";
 import SidebarSQLCollapseDisplay from "./SidebarSQLCollapseDisplay";
+import SidebarInspectCollapseTable from "./SidebarInspectCollapseTable";
 
 const SidebarQueryCollapseContainer: React.FC = () => {
   return (
@@ -16,6 +18,18 @@ const SidebarQueryCollapseContainer: React.FC = () => {
       }
     >
       <SidebarQueryCollapseForm />
+    </Collapse>
+  );
+};
+
+const SidebarInspectCollapseContainer: React.FC = () => {
+  return (
+    <Collapse
+      className={styles.SidebarInspectCollapseContainer}
+      title="Inspect"
+      subtitle={<Text small>Click on any object for more information.</Text>}
+    >
+      <SidebarInspectCollapseTable />
     </Collapse>
   );
 };
@@ -71,6 +85,7 @@ const SidebarCollapseGroup: React.FC = () => {
   return (
     <Collapse.Group className={styles.SidebarCollapseGroup}>
       <SidebarQueryCollapseContainer />
+      <SidebarInspectCollapseContainer />
       <SidebarStatsCollapseContainer />
       <SidebarSQLCollapseContainer />
     </Collapse.Group>

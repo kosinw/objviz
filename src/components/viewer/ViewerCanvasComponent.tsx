@@ -8,8 +8,11 @@ import {
 } from "react-d3-graph";
 
 import styles from "./Viewer.module.css";
+import { useToasts } from "@geist-ui/react";
 
 import { useSelectedStore } from "../../data/selection";
+import { useSize } from "../../hooks/size";
+import { useQueryClient } from "react-query";
 
 const config: Partial<GraphConfiguration<any, GraphLink>> & any = {
   automaticRearrangeAfterDropNode: true,
@@ -41,7 +44,7 @@ const config: Partial<GraphConfiguration<any, GraphLink>> & any = {
     highlightFontWeight: "bold",
     highlightStrokeColor: "#3291FF",
     highlightStrokeWidth: "SAME",
-    labelProperty: (node: ViewerGraphNode) => `${node.type} (${node.dbid})`,
+    labelProperty: (node: ViewerGraphNode) => `${node.type} (${node.name})`,
     mouseCursor: "pointer",
     opacity: 1,
     renderLabel: true,
@@ -73,6 +76,7 @@ export type ViewerGraphNode = {
   id: string;
   type: string;
   dbid: number;
+  name: string;
   [x: string]: any;
 };
 
@@ -85,18 +89,18 @@ export interface ViewerCanvasComponentProps {
 const ViewerCanvasComponent: React.FC<ViewerCanvasComponentProps> = ({
   data,
 }) => {
-  const ref = React.useRef<HTMLDivElement>(null);
-  const graphRef = React.useRef<any>(null);
+  const containerRef = React.useRef<HTMLDivElement>(null);
+  const dimensions = useSize(containerRef);
+  const queryClient = useQueryClient();
+  const [,setToast] = useToasts();
 
-  const [dimensions, setDimensions] = React.useState({
-    width: 1,
-    height: 1,
-  });
-
-  const [selectedNode, setSelectedNode] = useSelectedStore((store) => [
-    store.selected,
-    store.setSelected,
-  ]);
+  const [selectedNode, setSelectedNode, reset, setSelectedMeta] =
+    useSelectedStore((store) => [
+      store.selected,
+      store.setSelected,
+      store.reset,
+      store.setSelectedMeta,
+    ]);
 
   const [placedData, setPlacedData] = React.useState(
     produce(data, (draft) => {
@@ -126,33 +130,33 @@ const ViewerCanvasComponent: React.FC<ViewerCanvasComponentProps> = ({
             );
           })
         );
+      } else if (e.key === "q") {
+        setToast({ text: "Refetching last executed query..." })
+        queryClient.invalidateQueries("getNetwork");
       }
     },
     // eslint-disable-next-line
     [setPlacedData]
   );
 
-  const updateSize = React.useCallback(() => {
-    setDimensions({
-      width: ref.current?.clientWidth || 1,
-      height: ref.current?.clientHeight || 1,
-    });
-  }, [ref]);
-
   const handleNodeClick = (id: string) => {
     setSelectedNode(id);
+
+    const idx = data.nodes.findIndex((n) => n.id === id);
+
+    if (idx !== -1) {
+      const { dbid: id, type } = data.nodes[idx];
+      setSelectedMeta(id, type);
+    }
   };
 
   React.useEffect(() => {
-    updateSize();
-    window.addEventListener("resize", updateSize);
     window.addEventListener("keydown", handleKeyPress);
 
     return () => {
-      window.removeEventListener("resize", updateSize);
       window.removeEventListener("keydown", handleKeyPress);
     };
-  }, [handleKeyPress, updateSize]);
+  }, [handleKeyPress]);
 
   const newConfig = React.useMemo(
     () => Object.assign({}, config, { ...dimensions }),
@@ -171,15 +175,14 @@ const ViewerCanvasComponent: React.FC<ViewerCanvasComponentProps> = ({
   }, [placedData, selectedNode]);
 
   return (
-    <div ref={ref} className={styles.ViewerCanvasComponentContainer}>
+    <div ref={containerRef} className={styles.ViewerCanvasComponentContainer}>
       <Graph
         onClickGraph={() => {
           if (selectedNode !== "") {
-            setSelectedNode("");
+            reset();
           }
         }}
         onClickNode={handleNodeClick}
-        ref={graphRef}
         data={finalData}
         id="ox-graph-canvas"
         config={newConfig}

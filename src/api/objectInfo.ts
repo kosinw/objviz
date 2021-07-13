@@ -5,7 +5,7 @@ export type GetObjectInfoResponse = {
 };
 
 export type GetObjectInfoRequest = {
-  uri: string;
+  uri: string | null;
   id: number;
   type: string;
 };
@@ -14,6 +14,10 @@ export const getObjectInfo = async (
   params: GetObjectInfoRequest | null
 ): Promise<GetObjectInfoResponse | null> => {
   if (!params) {
+    return null;
+  }
+
+  if (!params.uri || !params.id || !params.type) {
     return null;
   }
 
