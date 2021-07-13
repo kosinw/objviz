@@ -37,7 +37,7 @@ const mapNetworkInfoToViewerFormat = (
       id: key,
       type: network[key].type,
       dbid: network[key].id,
-      name: truncate(network[key].name, 15),
+      name: truncate("" + network[key].name, 15),
       color: key === "1" ? "#7928CA" : "#fff",
       fontColor: key === "1" ? "#7928CA" : "#fff",
     });

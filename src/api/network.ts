@@ -6,9 +6,7 @@ export type GetNetworkResponse = {
     id: number;
     name: string;
     pointers_from: Array<number | null>;
-    status: string;
     type: string;
-    type_full?: string;
   };
 };
 
