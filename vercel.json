@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:match*",
+      "destination": "https://glacial-peak-54642.herokuapp.com/api/:match*"
+    }
+  ]
+}
