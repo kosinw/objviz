@@ -67,7 +67,7 @@ export const useURIForm = ({
       });
 
       setToast({
-        text: "Success: You are now connected to the database!",
+        text: "You are now connected to the database!",
         type: "success",
       });
 

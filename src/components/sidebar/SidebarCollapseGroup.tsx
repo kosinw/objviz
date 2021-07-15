@@ -51,32 +51,7 @@ const SidebarSQLCollapseContainer: React.FC = () => {
       title="Generated SQL"
       subtitle={<Text small>View executed SQL queries.</Text>}
     >
-      <SidebarSQLCollapseDisplay
-        queryCode={`SELECT * FROM person
-SELECT * FROM person
-SELECT * FROM person
-SELECT * FROM person
-SELECT * FROM person
-SELECT * FROM person
-SELECT * FROM person
-SELECT * FROM person
-SELECT * FROM person
-SELECT * FROM person
-SELECT * FROM person
-SELECT * FROM person
-SELECT * FROM person
-SELECT * FROM person
-SELECT * FROM person
-SELECT * FROM person
-SELECT * FROM person
-SELECT * FROM person
-SELECT * FROM person
-SELECT * FROM person
-SELECT * FROM person
-SELECT * FROM person
-SELECT * FROM person
-`}
-      />
+      <SidebarSQLCollapseDisplay queryCode="" />
     </Collapse>
   );
 };

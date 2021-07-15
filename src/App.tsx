@@ -8,26 +8,17 @@ import "inter-ui/inter.css";
 
 import MainLayout from "./components/MainLayout";
 
-// const queryClient = new QueryClient({
-//   defaultOptions: {
-//     queries: {
-//       suspense: true,
-//     },
-//   },
-// });
 const queryClient = new QueryClient();
 
 function Application() {
   return (
-    // <React.StrictMode>
-      <GeistProvider themeType="dark">
-        <CssBaseline />
-        <QueryClientProvider client={queryClient}>
-          <MainLayout />
-          <ReactQueryDevtools />
-        </QueryClientProvider>
-      </GeistProvider>
-    // </React.StrictMode>
+    <GeistProvider themeType="dark">
+      <CssBaseline />
+      <QueryClientProvider client={queryClient}>
+        <MainLayout />
+        <ReactQueryDevtools />
+      </QueryClientProvider>
+    </GeistProvider>
   );
 }
 

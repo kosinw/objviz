@@ -92,15 +92,11 @@ const ViewerCanvasComponent: React.FC<ViewerCanvasComponentProps> = ({
   const containerRef = React.useRef<HTMLDivElement>(null);
   const dimensions = useSize(containerRef);
   const queryClient = useQueryClient();
-  const [,setToast] = useToasts();
+  const [, setToast] = useToasts();
 
-  const [selectedNode, setSelectedNode, reset, setSelectedMeta] =
-    useSelectedStore((store) => [
-      store.selected,
-      store.setSelected,
-      store.reset,
-      store.setSelectedMeta,
-    ]);
+  const [selectedNode, setSelectedNode, setSelectedMeta] = useSelectedStore(
+    (store) => [store.selected, store.setSelected, store.setSelectedMeta]
+  );
 
   const [placedData, setPlacedData] = React.useState(
     produce(data, (draft) => {
@@ -131,7 +127,7 @@ const ViewerCanvasComponent: React.FC<ViewerCanvasComponentProps> = ({
           })
         );
       } else if (e.key === "q") {
-        setToast({ text: "Refetching last executed query..." })
+        setToast({ text: "Refetching last executed query..." });
         queryClient.invalidateQueries("getNetwork");
       }
     },
@@ -177,11 +173,6 @@ const ViewerCanvasComponent: React.FC<ViewerCanvasComponentProps> = ({
   return (
     <div ref={containerRef} className={styles.ViewerCanvasComponentContainer}>
       <Graph
-        onClickGraph={() => {
-          if (selectedNode !== "") {
-            reset();
-          }
-        }}
         onClickNode={handleNodeClick}
         data={finalData}
         id="ox-graph-canvas"

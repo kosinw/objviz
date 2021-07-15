@@ -13,7 +13,7 @@ export type URIHistoryState = {
 };
 
 export type URIState = {
-  currentRecord: URIHistoryRecord | null;
+  currentRecord: string | null;
   set: ImmerSetter<URIState>;
 };
 

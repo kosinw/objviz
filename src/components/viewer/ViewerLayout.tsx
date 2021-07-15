@@ -37,7 +37,7 @@ const mapNetworkInfoToViewerFormat = (
       id: key,
       type: network[key].type,
       dbid: network[key].id,
-      name: truncate("" + network[key].name, 15),
+      name: truncate(!!network[key].name ? network[key].name : "[no name]", 15),
       color: key === "1" ? "#7928CA" : "#fff",
       fontColor: key === "1" ? "#7928CA" : "#fff",
     });
@@ -56,6 +56,7 @@ const mapNetworkInfoToViewerFormat = (
 const ViewerLayout: React.FC = () => {
   const theme = useTheme();
   const { isLoading, data } = useVerifyURI();
+  const { isLoading: networkLoading } = useNetworkData();
   const {
     isAvailable,
     isLoading: isNetworkLoading,
@@ -74,7 +75,17 @@ const ViewerLayout: React.FC = () => {
           theme.type === "light" ? styles.ViewerLayoutLight : ""
         }`}
       >
-        {isLoading || !data ? (
+        {networkLoading ? (
+          <ViewerInactiveCover
+            title="Loading"
+            subtitle="Thank you for your patience as we fetch your query."
+          />
+        ) : isLoading ? (
+          <ViewerInactiveCover
+            title="Loading"
+            subtitle="Thank you for your patience as we verify your connection."
+          />
+        ) : !data ? (
           <ViewerInactiveCover
             title="Not Connected"
             subtitle="Connect to Postgres database to begin visualizing object dependencies."
