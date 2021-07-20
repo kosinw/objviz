@@ -4,24 +4,30 @@ import { persist } from "zustand/middleware";
 import produce from "immer";
 import { ImmerSetter } from "./common";
 
-export type URIHistoryRecord = string;
-
-export type URIHistoryState = {
-  records: URIHistoryRecord[];
+export type URIPresetState = {
+  uriStore: Record<string, string>;
   showFirstTimeModal: boolean;
-  set: ImmerSetter<URIHistoryState>;
+  set: ImmerSetter<URIPresetState>;
+  addEntry: (key: string, value: string) => void;
 };
 
 export type URIState = {
-  currentRecord: string | null;
+  uri: string | null;
   set: ImmerSetter<URIState>;
 };
 
-export const useURIHistoryStore = create<URIHistoryState>(
+export const useURIPresetStore = create<URIPresetState>(
   persist(
     (set) => ({
-      records: [],
+      uriStore: {},
       showFirstTimeModal: true,
+      addEntry: (key, value) => {
+        set(
+          produce((draft) => {
+            draft.uriStore[key] = value;
+          })
+        );
+      },
       set: (fn) => set(produce(fn)),
     }),
     {
@@ -34,7 +40,7 @@ export const useURIHistoryStore = create<URIHistoryState>(
 export const useURIStore = create<URIState>(
   persist(
     (set) => ({
-      currentRecord: null,
+      uri: null,
       set: (fn) => set(produce(fn)),
     }),
     {

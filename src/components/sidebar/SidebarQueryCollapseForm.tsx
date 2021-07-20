@@ -62,7 +62,7 @@ const SidebarQueryCollapseForm: React.FC = () => {
     data
   ) => {
     const params: GetNetworkRequest = Object.assign({}, data, {
-      depthLimit: 10,
+      depthLimit: 2, // TODO(kosi): Get this from settings, instead of hard coding it
       uri: currentRecord!,
     });
 

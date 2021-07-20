@@ -11,8 +11,10 @@ import styles from "./Viewer.module.css";
 import { useToasts } from "@geist-ui/react";
 
 import { useSelectedStore } from "../../data/selection";
-import { useSize } from "../../hooks/size";
 import { useQueryClient } from "react-query";
+import { useKey, useTimeoutFn, useWindowSize } from "react-use";
+import { useClientStore } from "../../data/client";
+import { useClearQuery } from "../../hooks/disconnect";
 
 const config: Partial<GraphConfiguration<any, GraphLink>> & any = {
   automaticRearrangeAfterDropNode: true,
@@ -90,7 +92,31 @@ const ViewerCanvasComponent: React.FC<ViewerCanvasComponentProps> = ({
   data,
 }) => {
   const containerRef = React.useRef<HTMLDivElement>(null);
-  const dimensions = useSize(containerRef);
+  const viewerRef = React.useRef<any>(null);
+  const { clearQuery } = useClearQuery();
+
+  const [dimensions, setDimensions] = React.useState({
+    width: 1000,
+    height: 1000,
+  });
+
+  const [isStatic, setStatic] = React.useState(false);
+
+  const { width: windowWidth, height: windowHeight } = useWindowSize();
+  const [topbarHeight, sidebarWidth] = useClientStore((state) => [
+    state.topbarHeight,
+    state.sidebarWidth,
+  ]);
+
+  const pause = () => {
+    console.log("pausing");
+    setStatic(true);
+    viewerRef.current.pauseSimulation();
+  };
+
+  // stop after all animations 2 seconds
+  const [, , reset] = useTimeoutFn(pause, 1500);
+
   const queryClient = useQueryClient();
   const [, setToast] = useToasts();
 
@@ -98,42 +124,58 @@ const ViewerCanvasComponent: React.FC<ViewerCanvasComponentProps> = ({
     (store) => [store.selected, store.setSelected, store.setSelectedMeta]
   );
 
-  const [placedData, setPlacedData] = React.useState(
-    produce(data, (draft) => {
-      draft.nodes = draft.nodes.map((n) =>
-        Object.assign({}, n, {
-          x: n.x || Math.floor(Math.random() * (dimensions.width / 2)),
-          y: n.y || Math.floor(Math.random() * (dimensions.height / 2)),
-        })
-      );
-    })
-  );
+  const setDimensionCallback = () => {
+    pause();
+    setStatic(false);
+    reset();
+    setDimensions({
+      width: windowWidth - sidebarWidth,
+      height: windowHeight - topbarHeight,
+    });
+  };
 
-  const handleKeyPress = React.useCallback(
-    (e: KeyboardEvent) => {
-      if (e.repeat) {
-        return;
-      }
+  // eslint-disable-next-line
+  React.useEffect(setDimensionCallback, []);
 
-      if (e.key === "r") {
-        setPlacedData(
-          produce((draft) => {
-            draft.nodes = draft.nodes.map((n) =>
-              Object.assign({}, n, {
-                x: n.x || Math.floor(Math.random() * (dimensions.width / 2)),
-                y: n.y || Math.floor(Math.random() * (dimensions.height / 2)),
-              })
-            );
-          })
-        );
-      } else if (e.key === "q") {
-        setToast({ text: "Refetching last executed query..." });
-        queryClient.invalidateQueries("getNetwork");
-      }
+  const placedData = produce(data, (draft) => {
+    draft.nodes = draft.nodes.map((n) =>
+      Object.assign({}, n, {
+        x: n.x || Math.floor(Math.random() * (dimensions.width / 2)),
+        y: n.y || Math.floor(Math.random() * (dimensions.height / 2)),
+      })
+    );
+  });
+
+  const handleResetQuery = React.useCallback(
+    async (_e: KeyboardEvent) => {
+      setToast({ text: "Refetching last executed query..." });
+      await queryClient.invalidateQueries("getNetwork");
+      setToast({ text: "Refetching finished!" });
     },
-    // eslint-disable-next-line
-    [setPlacedData]
+    [queryClient, setToast]
   );
+
+  const handleClearQuery = React.useCallback(
+    async (_e: KeyboardEvent) => {
+      setToast({ text: "Clearing query..." });
+      clearQuery();
+      await queryClient.invalidateQueries("getNetwork");
+    },
+    [queryClient, setToast, clearQuery]
+  );
+
+  useKey(
+    "r",
+    () => {
+      setToast({ text: "Resetting viewport size..." });
+      setDimensionCallback();
+    },
+    {},
+    [windowWidth, windowHeight, sidebarWidth, topbarHeight]
+  );
+
+  useKey("q", handleResetQuery);
+  useKey("c", handleClearQuery);
 
   const handleNodeClick = (id: string) => {
     setSelectedNode(id);
@@ -146,17 +188,13 @@ const ViewerCanvasComponent: React.FC<ViewerCanvasComponentProps> = ({
     }
   };
 
-  React.useEffect(() => {
-    window.addEventListener("keydown", handleKeyPress);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyPress);
-    };
-  }, [handleKeyPress]);
-
   const newConfig = React.useMemo(
-    () => Object.assign({}, config, { ...dimensions }),
-    [dimensions]
+    () =>
+      Object.assign({}, config, {
+        staticGraphWithDragAndDrop: isStatic,
+        ...dimensions,
+      }),
+    [dimensions, isStatic]
   );
 
   const finalData = React.useMemo(() => {
@@ -173,6 +211,7 @@ const ViewerCanvasComponent: React.FC<ViewerCanvasComponentProps> = ({
   return (
     <div ref={containerRef} className={styles.ViewerCanvasComponentContainer}>
       <Graph
+        ref={viewerRef}
         onClickNode={handleNodeClick}
         data={finalData}
         id="ox-graph-canvas"

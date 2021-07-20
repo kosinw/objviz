@@ -25,7 +25,7 @@ export const useDisconnect = () => {
 
   const disconnect = () => {
     setURIStore((draft) => {
-      draft.currentRecord = null;
+      draft.uri = null;
     });
 
     setQueryStore((draft) => {

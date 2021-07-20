@@ -4,6 +4,7 @@ import { Card, Text, Keyboard, Row } from "@geist-ui/react";
 import Visible from "../common/Visible";
 
 import styled from "styled-components";
+import { useKey } from "react-use";
 
 const StyledVisible = styled(Visible)`
   z-index: 99;
@@ -33,32 +34,25 @@ const RightText = styled(Text)`
 const ViewerControlsCard: React.FC = () => {
   const [isVisible, setVisible] = React.useState<boolean>(true);
 
-  const handleKeyPress = React.useCallback((e: KeyboardEvent) => {
-    const { key, repeat } = e;
-
-    if (repeat) {
-      return;
-    }
-
-    if (key === "t") {
+  const handleKeyPress = React.useCallback(
+    (e: KeyboardEvent) => {
+      const { repeat } = e;
+      if (repeat) {
+        return;
+      }
       setVisible((prev) => !prev);
-    }
-  }, []);
+    },
+    [setVisible]
+  );
 
-  React.useEffect(() => {
-    window.addEventListener("keydown", handleKeyPress);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyPress);
-    };
-  }, [handleKeyPress]);
+  useKey("t", handleKeyPress);
 
   return (
     <StyledVisible visible={isVisible}>
       <Card hoverable>
         <StyledRow>
           <Keyboard>R</Keyboard>
-          <RightText small>Reset node locations</RightText>
+          <RightText small>Reset viewport</RightText>
         </StyledRow>
         <StyledRow>
           <Keyboard>Q</Keyboard>
@@ -67,6 +61,10 @@ const ViewerControlsCard: React.FC = () => {
         <StyledRow>
           <Keyboard>T</Keyboard>
           <RightText small>Toggle this menu</RightText>
+        </StyledRow>
+        <StyledRow>
+          <Keyboard>C</Keyboard>
+          <RightText small>Clear current query</RightText>
         </StyledRow>
       </Card>
     </StyledVisible>

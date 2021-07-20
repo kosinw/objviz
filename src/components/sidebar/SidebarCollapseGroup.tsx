@@ -7,6 +7,15 @@ import SidebarQueryCollapseForm from "./SidebarQueryCollapseForm";
 import SidebarSQLCollapseDisplay from "./SidebarSQLCollapseDisplay";
 import SidebarInspectCollapseTable from "./SidebarInspectCollapseTable";
 
+const SidebarConnectCollapseContainer: React.FC = () => {
+  return (
+    <Collapse
+      title="Connect"
+      subtitle={<Text small>View your saved preset database connections.</Text>}
+    ></Collapse>
+  );
+};
+
 const SidebarQueryCollapseContainer: React.FC = () => {
   return (
     <Collapse
@@ -40,7 +49,11 @@ const SidebarStatsCollapseContainer: React.FC = () => {
     <Collapse
       title="Statistics"
       subtitle={<Text small>View statistics about dependency graph.</Text>}
-    ></Collapse>
+    >
+      <Text type="secondary" small>
+        To be implemented.
+      </Text>
+    </Collapse>
   );
 };
 
@@ -59,6 +72,7 @@ const SidebarSQLCollapseContainer: React.FC = () => {
 const SidebarCollapseGroup: React.FC = () => {
   return (
     <Collapse.Group className={styles.SidebarCollapseGroup}>
+      <SidebarConnectCollapseContainer />
       <SidebarQueryCollapseContainer />
       <SidebarInspectCollapseContainer />
       <SidebarStatsCollapseContainer />

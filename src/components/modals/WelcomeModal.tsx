@@ -5,15 +5,15 @@ import { ArrowRight } from "@geist-ui/react-icons";
 import type { CheckboxEvent } from "@geist-ui/react/dist/checkbox/checkbox";
 
 import BaseModal, { SharedModalProps } from "./BaseModal";
-import { useURIStore, useURIHistoryStore } from "../../data/uri";
+import { useURIStore, useURIPresetStore } from "../../data/uri";
 import { UseURIFormData, useURIForm } from "../../hooks/uriForm";
 
 const WelcomeModal: React.FC<SharedModalProps> = ({ setVisible, bindings }) => {
-  const [showFirstTimeModal, setURIHistoryStore] = useURIHistoryStore(
+  const [showFirstTimeModal, setURIHistoryStore] = useURIPresetStore(
     (store) => [store.showFirstTimeModal, store.set]
   );
 
-  const [currentRecord] = useURIStore((store) => [store.currentRecord]);
+  const [currentRecord] = useURIStore((store) => [store.uri]);
 
   const defaultValues: UseURIFormData = { databaseURI: currentRecord || "" };
 
@@ -31,9 +31,8 @@ const WelcomeModal: React.FC<SharedModalProps> = ({ setVisible, bindings }) => {
   return (
     <BaseModal bindings={bindings} setVisible={setVisible}>
       <Modal.Content>
-        <Text style={{ lineHeight: "30px" }} h3>
-          Hello, welcome to the OpenX in-house database object visualizer tool!
-          👋
+        <Text style={{ lineHeight: "30px", textAlign: "center" }} h3>
+          Welcome! 👋
         </Text>
         <Text
           p

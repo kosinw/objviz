@@ -8,7 +8,7 @@ import { useURIForm, UseURIFormData } from "../../hooks/uriForm";
 
 // TODO(kosi): Add autocomplete functionality when searching for database URIs
 const TopbarDatabaseURIForm: React.FC = () => {
-  const [currentRecord] = useURIStore((state) => [state.currentRecord]);
+  const [currentRecord] = useURIStore((state) => [state.uri]);
 
   const defaultValues: UseURIFormData = {
     databaseURI: currentRecord || "",

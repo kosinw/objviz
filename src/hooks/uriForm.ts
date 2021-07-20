@@ -4,7 +4,7 @@ import { useQueryClient } from "react-query";
 import { SubmitErrorHandler, useForm } from "react-hook-form";
 import type { SubmitHandler } from "react-hook-form";
 
-import { useURIStore, useURIHistoryStore } from "../data/uri";
+import { useURIStore } from "../data/uri";
 import { verifyURI } from "../api/uri";
 import { useDisconnect } from "./disconnect";
 
@@ -34,15 +34,14 @@ export const useURIForm = ({
 
   const { disconnect } = useDisconnect();
 
-  const [setURIHistoryStore] = useURIHistoryStore((store) => [store.set]);
   const [currentRecord, setURIStore] = useURIStore((store) => [
-    store.currentRecord,
+    store.uri,
     store.set,
   ]);
 
   const handleFormError: SubmitErrorHandler<UseURIFormData> = (errors) => {
     setToast({
-      text: "Error: You must enter a valid PostgreSQL URI.",
+      text: "You must enter a valid PostgreSQL URI.",
       type: "error",
     });
   };
@@ -59,11 +58,7 @@ export const useURIForm = ({
 
     if (result) {
       setURIStore((draft) => {
-        draft.currentRecord = data.databaseURI;
-      });
-
-      setURIHistoryStore((draft) => {
-        draft.records = [data.databaseURI, ...draft.records];
+        draft.uri = data.databaseURI;
       });
 
       setToast({
@@ -77,7 +72,7 @@ export const useURIForm = ({
     } else {
       // TODO(kosi): Add error handling crap here
       setToast({
-        text: "Error: There was an error connecting to the database.",
+        text: "There was an error connecting to the database.",
         type: "error",
       });
     }

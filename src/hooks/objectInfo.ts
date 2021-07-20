@@ -4,7 +4,7 @@ import { useSelectedStore } from "../data/selection";
 import { useURIStore } from "../data/uri";
 
 export const useObjectInfo = () => {
-  const [uri] = useURIStore((store) => [store.currentRecord]);
+  const [uri] = useURIStore((store) => [store.uri]);
   const [id, type] = useSelectedStore((store) => [store.id, store.type]);
 
   return useQuery(

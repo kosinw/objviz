@@ -1,12 +1,17 @@
 import axios from "axios";
 
 export type GetNetworkResponse = {
-  [x: number]: {
-    deleted: "0" | "1";
-    id: number;
-    name: string;
-    pointers_from: Array<number | null>;
-    type: string;
+  network: {
+    [x: number]: {
+      deleted: "0" | "1";
+      id: number;
+      name: string;
+      pointers_from: Array<number | null>;
+      type: string;
+    };
+  };
+  sqlQueries: {
+    [x: string]: boolean;
   };
 };
 

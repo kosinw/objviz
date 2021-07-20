@@ -15,6 +15,7 @@ import { GraphLink } from "react-d3-graph";
 import { useVerifyURI } from "../../hooks/verifyURI";
 import { useNetworkData } from "../../hooks/networkData";
 import { GetNetworkResponse } from "../../api/network";
+import ViewerLimitSlider from "./ViewerLimitSlider";
 
 const truncate = (target: string, length: number) => {
   return target.substring(0, length) + (length < target.length ? "..." : "");
@@ -23,16 +24,23 @@ const truncate = (target: string, length: number) => {
 // TODO(kosi): Move this logic inside ViewerCanvasComponent as layout should not deal with
 // logic like this.
 const mapNetworkInfoToViewerFormat = (
-  network: GetNetworkResponse | undefined | null
+  response: GetNetworkResponse | undefined | null,
+  limit: number = 100
 ): ViewerGraphFormat => {
   const nodes: ViewerGraphNode[] = [];
   const links: GraphLink[] = [];
 
-  if (!network) {
+  if (!response) {
     return { nodes, links };
   }
 
+  const { network } = response;
+
   for (const key in network) {
+    if (parseInt(key) > limit) {
+      continue;
+    }
+
     nodes.push({
       id: key,
       type: network[key].type,
@@ -44,7 +52,12 @@ const mapNetworkInfoToViewerFormat = (
 
     for (let i = 0; i < network[key].pointers_from.length; ++i) {
       const n = network[key].pointers_from[i];
+
       if (!!n) {
+        if (n > limit) {
+          continue;
+        }
+
         links.push({ target: key, source: n.toString() });
       }
     }
@@ -108,6 +121,7 @@ const ViewerLayout: React.FC = () => {
     >
       <ViewerCanvasComponent data={finalData} />
       <ViewerControlsCard />
+      <ViewerLimitSlider />
     </div>
   );
 };

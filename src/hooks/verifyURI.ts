@@ -3,7 +3,7 @@ import { verifyURI } from "../api/uri";
 import { useURIStore } from "../data/uri";
 
 export const useVerifyURI = () => {
-  const [currentRecord] = useURIStore((store) => [store.currentRecord]);
+  const [currentRecord] = useURIStore((store) => [store.uri]);
 
   return {
     currentRecord,

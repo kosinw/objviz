@@ -5,9 +5,21 @@ import styles from "./Sidebar.module.css";
 import Subtitle from "../common/Subtitle";
 import SidebarCollapseGroup from "./SidebarCollapseGroup";
 
+import { useMeasure } from "react-use";
+import { useClientStore } from "../../data/client";
+
 const SidebarLayout: React.FC = () => {
+  const [ref, { width }] = useMeasure<HTMLElement>();
+  const [set] = useClientStore((state) => [state.set]);
+
+  React.useLayoutEffect(() => {
+    set((draft) => {
+      draft.sidebarWidth = width + 64;
+    });
+  }, [width, set, ref]);
+
   return (
-    <aside className={styles.SidebarLayoutContainer}>
+    <aside ref={ref} className={styles.SidebarLayoutContainer}>
       <div className={styles.SidebarLayout}>
         <Grid.Container
           className={styles.SidebarLayoutTop}
