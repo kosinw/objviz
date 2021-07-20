@@ -16,6 +16,7 @@ import { useVerifyURI } from "../../hooks/verifyURI";
 import { useNetworkData } from "../../hooks/networkData";
 import { GetNetworkResponse } from "../../api/network";
 import ViewerLimitSlider from "./ViewerLimitSlider";
+import { useClientStore } from "../../data/client";
 
 const truncate = (target: string, length: number) => {
   return target.substring(0, length) + (length < target.length ? "..." : "");
@@ -75,10 +76,21 @@ const ViewerLayout: React.FC = () => {
     isLoading: isNetworkLoading,
     data: networkInfo,
   } = useNetworkData();
+  const [setClientState] = useClientStore((store) => [store.set]);
+  const [limit, setLimit] = React.useState<number>(10);
+
+  React.useEffect(() => {
+    setClientState((draft) => {
+      draft.sqlStatements =
+        !!networkInfo && !!networkInfo.sqlQueries
+          ? Object.keys(networkInfo?.sqlQueries).join("\n")
+          : "";
+    });
+  }, [networkInfo, setClientState]);
 
   const finalData = React.useMemo(
-    () => mapNetworkInfoToViewerFormat(networkInfo),
-    [networkInfo]
+    () => mapNetworkInfoToViewerFormat(networkInfo, limit),
+    [networkInfo, limit]
   );
 
   if (!isAvailable || isNetworkLoading || !networkInfo) {
@@ -121,7 +133,7 @@ const ViewerLayout: React.FC = () => {
     >
       <ViewerCanvasComponent data={finalData} />
       <ViewerControlsCard />
-      <ViewerLimitSlider />
+      <ViewerLimitSlider limit={limit} setLimit={setLimit} />
     </div>
   );
 };

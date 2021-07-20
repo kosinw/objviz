@@ -4,11 +4,10 @@ import { persist } from "zustand/middleware";
 import produce from "immer";
 import { ImmerSetter } from "./common";
 
-export type URIPresetState = {
-  uriStore: Record<string, string>;
+// TODO(kosi): This is deprecated, remove this eventually
+export type URIHistoryState = {
   showFirstTimeModal: boolean;
-  set: ImmerSetter<URIPresetState>;
-  addEntry: (key: string, value: string) => void;
+  set: ImmerSetter<URIHistoryState>;
 };
 
 export type URIState = {
@@ -16,18 +15,11 @@ export type URIState = {
   set: ImmerSetter<URIState>;
 };
 
-export const useURIPresetStore = create<URIPresetState>(
+export const useURIHistoryStore = create<URIHistoryState>(
   persist(
     (set) => ({
       uriStore: {},
       showFirstTimeModal: true,
-      addEntry: (key, value) => {
-        set(
-          produce((draft) => {
-            draft.uriStore[key] = value;
-          })
-        );
-      },
       set: (fn) => set(produce(fn)),
     }),
     {

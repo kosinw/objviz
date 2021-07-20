@@ -6,13 +6,18 @@ import styles from "./Sidebar.module.css";
 import SidebarQueryCollapseForm from "./SidebarQueryCollapseForm";
 import SidebarSQLCollapseDisplay from "./SidebarSQLCollapseDisplay";
 import SidebarInspectCollapseTable from "./SidebarInspectCollapseTable";
+import SidebarConnectCollapseDisplay from "./SidebaConnectCollapseDisplay";
+
+import { useClientStore } from "../../data/client";
 
 const SidebarConnectCollapseContainer: React.FC = () => {
   return (
     <Collapse
       title="Connect"
       subtitle={<Text small>View your saved preset database connections.</Text>}
-    ></Collapse>
+    >
+      <SidebarConnectCollapseDisplay />
+    </Collapse>
   );
 };
 
@@ -59,12 +64,14 @@ const SidebarStatsCollapseContainer: React.FC = () => {
 
 // TODO(kosi): Add content to SQL container
 const SidebarSQLCollapseContainer: React.FC = () => {
+  const [sqlStatements] = useClientStore((store) => [store.sqlStatements]);
+
   return (
     <Collapse
       title="Generated SQL"
       subtitle={<Text small>View executed SQL queries.</Text>}
     >
-      <SidebarSQLCollapseDisplay queryCode="" />
+      <SidebarSQLCollapseDisplay queryCode={sqlStatements} />
     </Collapse>
   );
 };

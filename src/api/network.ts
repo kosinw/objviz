@@ -19,6 +19,7 @@ export type GetNetworkRequest = {
   type: string;
   id: number;
   depthLimit: number;
+  objectLimit: number;
   uri: string;
 };
 

@@ -1,9 +1,33 @@
 import * as React from "react";
-import { Card, Button, Code, useClipboard, useToasts } from "@geist-ui/react";
+import {
+  Card,
+  Button,
+  Code,
+  useClipboard,
+  useToasts,
+  Text,
+} from "@geist-ui/react";
+
+import styled from "styled-components";
 
 export interface SidebarSQLCollapseDisplayProps {
   queryCode: string;
 }
+
+const StyledCode = styled(Code)`
+  box-sizing: border-box;
+  overflow: auto auto;
+  max-height: 300px;
+  border: 0;
+  width: 100%;
+  height: 100%;
+  margin: -16pt -16pt 0 0;
+  padding-bottom: 0;
+  padding-left: 0;
+  padding-right: 0;
+
+  scrollbar-width: none;
+`;
 
 const SidebarSQLCollapseDisplay: React.FC<SidebarSQLCollapseDisplayProps> = ({
   queryCode,
@@ -16,26 +40,9 @@ const SidebarSQLCollapseDisplay: React.FC<SidebarSQLCollapseDisplayProps> = ({
     setToast({ text: "Copied SQL query succcesfully." });
   };
 
-  return (
+  return !!queryCode ? (
     <Card>
-      <Code
-        style={{
-          boxSizing: "border-box",
-          overflowX: "auto",
-          overflowY: "auto",
-          maxHeight: "300px",
-          border: 0,
-          width: "100%",
-          height: "100%",
-          margin: "-16pt -16pt 0 0",
-          paddingBottom: 0,
-          paddingLeft: 0,
-          paddingRight: 0,
-        }}
-        block
-      >
-        {queryCode}
-      </Code>
+      <StyledCode block>{queryCode}</StyledCode>
       <Card.Footer style={{ padding: 0, boxSizing: "border-box" }}>
         <Button
           onClick={onClick}
@@ -53,6 +60,10 @@ const SidebarSQLCollapseDisplay: React.FC<SidebarSQLCollapseDisplayProps> = ({
         </Button>
       </Card.Footer>
     </Card>
+  ) : (
+    <Text small type="secondary">
+      Enter a query to view generated SQL.
+    </Text>
   );
 };
 

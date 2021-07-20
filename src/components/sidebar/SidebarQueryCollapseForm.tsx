@@ -22,6 +22,8 @@ import { AutoCompleteOptions } from "@geist-ui/react/dist/auto-complete/auto-com
 export interface SidebarQueryCollapseFormData {
   type: string;
   id: number;
+  depthLimit: number;
+  objectLimit: number;
 }
 const SelectContainer = styled.div`
   display: flex;
@@ -43,7 +45,12 @@ const SidebarQueryCollapseForm: React.FC = () => {
     formState: { errors, isSubmitting, isValid },
   } = useForm<SidebarQueryCollapseFormData>({
     mode: "onChange",
-    defaultValues: { id: lastQuery?.id, type: lastQuery?.type },
+    defaultValues: {
+      id: lastQuery?.id,
+      type: lastQuery?.type,
+      depthLimit: 2,
+      objectLimit: 100,
+    },
   });
 
   const { data: types, isLoading: loadingTypes } = useTypes();
@@ -62,8 +69,9 @@ const SidebarQueryCollapseForm: React.FC = () => {
     data
   ) => {
     const params: GetNetworkRequest = Object.assign({}, data, {
-      depthLimit: 2, // TODO(kosi): Get this from settings, instead of hard coding it
       uri: currentRecord!,
+      objectLimit: 100,
+      depthLimit: 2,
     });
 
     clearQuery();
@@ -116,17 +124,6 @@ const SidebarQueryCollapseForm: React.FC = () => {
     <form onSubmit={handleSubmit(onSubmit)}>
       <Grid.Container gap={2} direction="column">
         <Grid xs>
-          {/* TODO(kosi): Remove readOnly and make this a dropdown instead of an input */}
-          {/* <Input
-            status={!!errors.type ? "error" : "default"}
-            width="100%"
-            readOnly
-            disabled={isLoading || !data}
-            placeholder="Enter type of object..."
-            {...register("type")}
-          >
-            <Code>type</Code> (optional)
-          </Input> */}
           <SelectContainer>
             <Text
               type="secondary"
@@ -159,6 +156,26 @@ const SidebarQueryCollapseForm: React.FC = () => {
             {...register("id", { required: true, valueAsNumber: true })}
           >
             <Code>id</Code> (required)
+          </Input>
+        </Grid>
+        <Grid xs>
+          <Input
+            width="100%"
+            disabled={isLoading || !data}
+            placeholder="Enter depth limit of graph..."
+            {...register("depthLimit")}
+          >
+            <Code>depthLimit</Code> (optional)
+          </Input>
+        </Grid>
+        <Grid xs>
+          <Input
+            width="100%"
+            disabled={isLoading || !data}
+            placeholder="Enter maximum objects of graph..."
+            {...register("objectLimit")}
+          >
+            <Code>objectLimit</Code> (optional)
           </Input>
         </Grid>
         <Grid justify="center" xs>

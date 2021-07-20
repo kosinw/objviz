@@ -5,11 +5,11 @@ import { ArrowRight } from "@geist-ui/react-icons";
 import type { CheckboxEvent } from "@geist-ui/react/dist/checkbox/checkbox";
 
 import BaseModal, { SharedModalProps } from "./BaseModal";
-import { useURIStore, useURIPresetStore } from "../../data/uri";
+import { useURIStore, useURIHistoryStore } from "../../data/uri";
 import { UseURIFormData, useURIForm } from "../../hooks/uriForm";
 
 const WelcomeModal: React.FC<SharedModalProps> = ({ setVisible, bindings }) => {
-  const [showFirstTimeModal, setURIHistoryStore] = useURIPresetStore(
+  const [showFirstTimeModal, setURIHistoryStore] = useURIHistoryStore(
     (store) => [store.showFirstTimeModal, store.set]
   );
 
