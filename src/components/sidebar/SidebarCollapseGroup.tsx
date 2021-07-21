@@ -6,25 +6,32 @@ import styles from "./Sidebar.module.css";
 import SidebarQueryCollapseForm from "./SidebarQueryCollapseForm";
 import SidebarSQLCollapseDisplay from "./SidebarSQLCollapseDisplay";
 import SidebarInspectCollapseTable from "./SidebarInspectCollapseTable";
-import SidebarConnectCollapseDisplay from "./SidebaConnectCollapseDisplay";
+import SidebarConnectCollapseForm from "./SidebaConnectCollapseForm";
 
 import { useClientStore } from "../../data/client";
+import { useURIStore } from "../../data/uri";
 
 const SidebarConnectCollapseContainer: React.FC = () => {
+  const uri = useURIStore((state) => state.uri);
+
   return (
     <Collapse
       title="Connect"
-      subtitle={<Text small>View your saved preset database connections.</Text>}
+      initialVisible={!uri}
+      subtitle={<Text small>View your saved database connections.</Text>}
     >
-      <SidebarConnectCollapseDisplay />
+      <SidebarConnectCollapseForm />
     </Collapse>
   );
 };
 
 const SidebarQueryCollapseContainer: React.FC = () => {
+  const uri = useURIStore((state) => state.uri);
+
   return (
     <Collapse
       title="Query"
+      initialVisible={!!uri}
       subtitle={
         <Text small>
           Enter an initial object to begin dependency graph visualization.

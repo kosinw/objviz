@@ -6,10 +6,10 @@ import styled from "styled-components";
 
 const FixedPositionContainer = styled.div`
   position: absolute;
-  left: calc(50% - 20rem);
+  left: calc(50% - 21rem);
   bottom: 3%;
   opacity: 0%;
-  width: 40rem;
+  width: 42rem;
   transition: opacity 0.3s cubic-bezier(0.12, 0, 0.39, 0);
 
   :hover {
@@ -41,7 +41,7 @@ const ViewerLimitSlider: React.FC<ViewerLimitSliderProps> = ({
             Object Limit
           </Text>
           <Slider
-            style={{ width: "75%" }}
+            style={{ width: "75%", marginRight: 10 }}
             step={5}
             min={5}
             value={limit}

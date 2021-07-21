@@ -22,9 +22,9 @@ const BaseModal: React.FC<BaseModalProps> = ({ children, bindings }) => {
   const Logo = theme.type === "light" ? LightLogo : DarkLogo;
 
   return (
-    <Modal width="30rem" {...bindings}>
+    <Modal width="35rem" {...bindings}>
       <Modal.Title>
-        <Image width={200} height={80} src={Logo} />
+        <Image width={170} height={80} src={Logo} />
       </Modal.Title>
       <Modal.Subtitle style={{ marginBottom: "0.7rem" }}>
         <Subtitle value="Database Object Visualizer" />
