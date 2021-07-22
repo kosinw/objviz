@@ -19,7 +19,6 @@ import AddEditPresetModal from "../modals/AddEditPresetModal";
 import { verifyURI } from "../../api/uri";
 import { useQueryClient } from "react-query";
 import { useURIStore } from "../../data/uri";
-import { disconnect } from "process";
 import { useDisconnect } from "../../hooks/disconnect";
 
 const FieldContainer = styled.div`

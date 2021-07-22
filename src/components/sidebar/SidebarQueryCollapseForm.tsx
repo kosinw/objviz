@@ -7,6 +7,7 @@ import {
   Button,
   Code,
   Grid,
+  Checkbox,
   useToasts,
 } from "@geist-ui/react";
 import { useVerifyURI } from "../../hooks/verifyURI";
@@ -24,6 +25,7 @@ export interface SidebarQueryCollapseFormData {
   id: number;
   depthLimit: number;
   objectLimit: number;
+  depthFirst: boolean;
 }
 const SelectContainer = styled.div`
   display: flex;
@@ -42,6 +44,7 @@ const SidebarQueryCollapseForm: React.FC = () => {
     register,
     handleSubmit,
     setValue,
+    watch,
     formState: { errors, isSubmitting, isValid },
   } = useForm<SidebarQueryCollapseFormData>({
     mode: "onChange",
@@ -50,6 +53,7 @@ const SidebarQueryCollapseForm: React.FC = () => {
       type: lastQuery?.type,
       depthLimit: 2,
       objectLimit: 100,
+      depthFirst: false,
     },
   });
 
@@ -63,6 +67,7 @@ const SidebarQueryCollapseForm: React.FC = () => {
 
   React.useEffect(() => {
     register("type", { required: true });
+    register("depthFirst");
   }, [register]);
 
   const onSubmit: SubmitHandler<SidebarQueryCollapseFormData> = async (
@@ -72,6 +77,10 @@ const SidebarQueryCollapseForm: React.FC = () => {
       uri: currentRecord!,
       objectLimit: 100,
       depthLimit: 2,
+    });
+
+    setToast({
+      text: "Sending visualization query to server...",
     });
 
     clearQuery();
@@ -163,7 +172,7 @@ const SidebarQueryCollapseForm: React.FC = () => {
             width="100%"
             disabled={isLoading || !data}
             placeholder="Enter depth limit of graph..."
-            {...register("depthLimit")}
+            {...register("depthLimit", { valueAsNumber: true })}
           >
             <Code>depthLimit</Code> (optional)
           </Input>
@@ -173,10 +182,22 @@ const SidebarQueryCollapseForm: React.FC = () => {
             width="100%"
             disabled={isLoading || !data}
             placeholder="Enter maximum objects of graph..."
-            {...register("objectLimit")}
+            {...register("objectLimit", { valueAsNumber: true })}
           >
             <Code>objectLimit</Code> (optional)
           </Input>
+        </Grid>
+        <Grid xs>
+          <Checkbox
+            width="100%"
+            disabled={isLoading || !data}
+            checked={watch("depthFirst")}
+            onChange={(value) => setValue("depthFirst", value.target.checked)}
+            size="small"
+            placeholder="Enter maximum objects of graph..."
+          >
+            <Code>depthFirst</Code>
+          </Checkbox>
         </Grid>
         <Grid justify="center" xs>
           <Button

@@ -9,9 +9,14 @@ import {
 } from "@geist-ui/react";
 import { X } from "@geist-ui/react-icons";
 import * as React from "react";
-import { UseFormSetValue, useForm, SubmitHandler, SubmitErrorHandler } from "react-hook-form";
+import {
+  UseFormSetValue,
+  useForm,
+  SubmitHandler,
+  SubmitErrorHandler,
+} from "react-hook-form";
 import { parse, ConnectionOptions } from "pg-connection-string";
-import { SidebarConnectCollapseFormInputs } from "../sidebar/SidebaConnectCollapseForm";
+import { SidebarConnectCollapseFormInputs } from "../sidebar/SidebarConnectCollapseForm";
 import BaseModal, { SharedModalProps } from "./BaseModal";
 import styled from "styled-components";
 import { LastConnected, usePresetStore } from "../../data/preset";
@@ -91,7 +96,7 @@ const AddEditPresetModal: React.FC<AddEditModalProps> = ({
     setValue,
     getValues,
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { isSubmitting, errors },
   } = useForm({
     mode: "onChange",
     defaultValues,
@@ -145,11 +150,13 @@ const AddEditPresetModal: React.FC<AddEditModalProps> = ({
     onCancel();
   };
 
-  const onError: SubmitErrorHandler<AddEditPresetModalFormProps> = async (errors) => {
+  const onError: SubmitErrorHandler<AddEditPresetModalFormProps> = async (
+    errors
+  ) => {
     Object.keys(errors).forEach((error) => {
       setToast({
         type: "error",
-        text: `The "${error}" field is required.`
+        text: `The "${error}" field is required.`,
       });
     });
   };
@@ -244,6 +251,7 @@ const AddEditPresetModal: React.FC<AddEditModalProps> = ({
                 name="name"
                 width="100%"
                 label="Name"
+                status={!!errors.name ? "error" : "default"}
               />
             </Grid>
             <Grid xs>
@@ -253,6 +261,7 @@ const AddEditPresetModal: React.FC<AddEditModalProps> = ({
                 name="uri"
                 width="100%"
                 label="URI"
+                status={!!errors.uri ? "error" : "default"}
               />
             </Grid>
             <Grid xs>
@@ -264,6 +273,7 @@ const AddEditPresetModal: React.FC<AddEditModalProps> = ({
                     name="host"
                     width="100%"
                     label="Host"
+                    status={!!errors.host ? "error" : "default"}
                   />
                 </Grid>
                 <Grid xs>
@@ -306,6 +316,7 @@ const AddEditPresetModal: React.FC<AddEditModalProps> = ({
                 value={database}
                 width="100%"
                 label="Database"
+                status={!!errors.database ? "error" : "default"}
               />
             </Grid>
             <Grid xs>

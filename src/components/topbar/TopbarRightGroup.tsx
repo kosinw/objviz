@@ -1,8 +1,9 @@
 import * as React from "react";
-import { Grid } from "@geist-ui/react";
-// import { QuestionCircle, Settings, MoreVertical } from "@geist-ui/react-icons";
+import { Grid, Button } from "@geist-ui/react";
+import { Moon, Sun } from "@geist-ui/react-icons";
 
 import TopbarStatusIndicator from "./TopbarStatusIndicator";
+import { useThemeStore } from "../../data/theme";
 
 // import styled from "styled-components";
 
@@ -18,6 +19,20 @@ import TopbarStatusIndicator from "./TopbarStatusIndicator";
 //   }
 // `;
 
+const TopbarRightThemeButton: React.FC = () => {
+  const [value, setValue] = useThemeStore(store => [store.theme, store.set]);
+
+  return (
+    <Button
+      onClick={() => setValue(value === "dark" ? "light" : "dark")}
+      icon={value === "dark" ? <Moon /> : <Sun />}
+      size="mini"
+    >
+      {value === "dark" ? "Dark" : "Light"}
+    </Button>
+  );
+};
+
 const TopbarRightGroup: React.FC = () => {
   return (
     <Grid.Container gap={2} direction="row">
@@ -29,15 +44,9 @@ const TopbarRightGroup: React.FC = () => {
       >
         <TopbarStatusIndicator />
       </Grid>
-      {/* <Grid style={{ display: "flex" }} alignItems="center" md xs={0}>
-        <Settings size={20} />
+      <Grid style={{ display: "flex" }} alignItems="center" md>
+        <TopbarRightThemeButton />
       </Grid>
-      <Grid style={{ display: "flex" }} alignItems="center" md xs={0}>
-        <QuestionCircleButton size={20} />
-      </Grid>
-      <Grid style={{ display: "flex" }} alignItems="center" md xs={0}>
-        <MoreVerticalButton size={20} />
-      </Grid> */}
     </Grid.Container>
   );
 };

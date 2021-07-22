@@ -12,7 +12,7 @@ const StyledVisible = styled(Visible)`
   bottom: 1.6rem;
   right: 1rem;
   width: auto !important;
-  min-width: 237px;
+  min-width: 300px;
 `;
 
 const StyledRow = styled(Row)`
@@ -36,10 +36,15 @@ const ViewerControlsCard: React.FC = () => {
 
   const handleKeyPress = React.useCallback(
     (e: KeyboardEvent) => {
+      if (!e.ctrlKey || !e.altKey) {
+        return;
+      }
+
       const { repeat } = e;
       if (repeat) {
         return;
       }
+
       setVisible((prev) => !prev);
     },
     [setVisible]
@@ -51,20 +56,24 @@ const ViewerControlsCard: React.FC = () => {
     <StyledVisible visible={isVisible}>
       <Card hoverable>
         <StyledRow>
-          <Keyboard>R</Keyboard>
+          <Keyboard ctrl option>R</Keyboard>
           <RightText small>Reset viewport</RightText>
         </StyledRow>
         <StyledRow>
-          <Keyboard>Q</Keyboard>
+          <Keyboard ctrl option>Q</Keyboard>
           <RightText small>Rerun last query</RightText>
         </StyledRow>
         <StyledRow>
-          <Keyboard>T</Keyboard>
+          <Keyboard ctrl option>T</Keyboard>
           <RightText small>Toggle this menu</RightText>
         </StyledRow>
         <StyledRow>
-          <Keyboard>C</Keyboard>
+          <Keyboard ctrl option>C</Keyboard>
           <RightText small>Clear current query</RightText>
+        </StyledRow>
+        <StyledRow>
+          <Keyboard ctrl option>D</Keyboard>
+          <RightText small>Deselect selected node</RightText>
         </StyledRow>
       </Card>
     </StyledVisible>

@@ -8,71 +8,13 @@ import {
 } from "react-d3-graph";
 
 import styles from "./Viewer.module.css";
-import { useToasts } from "@geist-ui/react";
+import { useToasts, useTheme } from "@geist-ui/react";
 
 import { useSelectedStore } from "../../data/selection";
 import { useQueryClient } from "react-query";
 import { useKey, useTimeoutFn, useWindowSize } from "react-use";
 import { useClientStore } from "../../data/client";
 import { useClearQuery } from "../../hooks/disconnect";
-
-const config: Partial<GraphConfiguration<any, GraphLink>> & any = {
-  automaticRearrangeAfterDropNode: true,
-  collapsible: false,
-  directed: true,
-  highlightDegree: 1,
-  highlightOpacity: 1,
-  nodeHighlightBehavior: true,
-  linkHighlightBehavior: true,
-  maxZoom: 8,
-  minZoom: 0.5,
-  panAndZoom: false,
-  staticGraphWithDragAndDrop: false,
-  staticGraph: false,
-  d3: {
-    alphaTarget: 0.05,
-    gravity: -200,
-    linkLength: 200,
-    linkStrength: 1,
-    // disableLinkForce: false,
-  },
-  node: {
-    color: "#fff",
-    fontColor: "#fff",
-    fontSize: 10,
-    fontWeight: "normal",
-    highlightColor: "SAME",
-    highlightFontSize: 10,
-    highlightFontWeight: "bold",
-    highlightStrokeColor: "#3291FF",
-    highlightStrokeWidth: "SAME",
-    labelProperty: (node: ViewerGraphNode) => `${node.type} (${node.name})`,
-    mouseCursor: "pointer",
-    opacity: 1,
-    renderLabel: true,
-    size: 400,
-    strokeColor: "none",
-    strokeWidth: 2,
-    svg: "",
-    symbolType: "circle",
-  },
-  link: {
-    color: "#333",
-    fontColor: "#fff",
-    fontSize: 12,
-    fontWeight: "normal",
-    highlightColor: "#3291FF",
-    highlightFontSize: 8,
-    highlightFontWeight: "bold",
-    mouseCursor: "pointer",
-    opacity: 1,
-    renderLabel: true,
-    semanticStrokeWidth: true,
-    strokeWidth: 1,
-    markerHeight: 6,
-    markerWidth: 6,
-  },
-};
 
 export type ViewerGraphNode = {
   id: string;
@@ -91,6 +33,71 @@ export interface ViewerCanvasComponentProps {
 const ViewerCanvasComponent: React.FC<ViewerCanvasComponentProps> = ({
   data,
 }) => {
+  const theme = useTheme();
+
+  const config: Partial<GraphConfiguration<any, GraphLink>> & any =
+    React.useMemo(
+      () => ({
+        automaticRearrangeAfterDropNode: true,
+        collapsible: false,
+        directed: true,
+        highlightDegree: 1,
+        highlightOpacity: 1,
+        nodeHighlightBehavior: true,
+        linkHighlightBehavior: true,
+        maxZoom: 8,
+        minZoom: 0.5,
+        panAndZoom: false,
+        staticGraphWithDragAndDrop: false,
+        staticGraph: false,
+        d3: {
+          alphaTarget: 0.05,
+          gravity: -200,
+          linkLength: 200,
+          linkStrength: 1,
+          disableLinkForce: false,
+        },
+        node: {
+          color: theme.palette.foreground,
+          fontColor: theme.palette.foreground,
+          fontSize: 10,
+          fontWeight: "normal",
+          highlightColor: "SAME",
+          highlightFontSize: 10,
+          highlightFontWeight: "bold",
+          highlightStrokeColor: "#3291FF",
+          highlightStrokeWidth: "SAME",
+          labelProperty: (node: ViewerGraphNode) =>
+            `${node.type} (${node.name})`,
+          mouseCursor: "pointer",
+          opacity: 1,
+          renderLabel: true,
+          size: 400,
+          strokeColor: "none",
+          strokeWidth: 2,
+          svg: "",
+          symbolType: "circle",
+        },
+        link: {
+          color: theme.palette.accents_2,
+          fontColor: theme.palette.foreground,
+          fontSize: 12,
+          fontWeight: "normal",
+          highlightColor: "#3291FF",
+          highlightFontSize: 8,
+          highlightFontWeight: "bold",
+          mouseCursor: "pointer",
+          opacity: 1,
+          renderLabel: true,
+          semanticStrokeWidth: true,
+          strokeWidth: 1,
+          markerHeight: 6,
+          markerWidth: 6,
+        },
+      }),
+      [theme]
+    );
+
   const containerRef = React.useRef<HTMLDivElement>(null);
   const viewerRef = React.useRef<any>(null);
   const { clearQuery } = useClearQuery();
@@ -120,9 +127,13 @@ const ViewerCanvasComponent: React.FC<ViewerCanvasComponentProps> = ({
   const queryClient = useQueryClient();
   const [, setToast] = useToasts();
 
-  const [selectedNode, setSelectedNode, setSelectedMeta] = useSelectedStore(
-    (store) => [store.selected, store.setSelected, store.setSelectedMeta]
-  );
+  const [selectedNode, setSelectedNode, setSelectedMeta, resetSelected] =
+    useSelectedStore((store) => [
+      store.selected,
+      store.setSelected,
+      store.setSelectedMeta,
+      store.reset,
+    ]);
 
   const setDimensionCallback = () => {
     pause();
@@ -147,7 +158,11 @@ const ViewerCanvasComponent: React.FC<ViewerCanvasComponentProps> = ({
   });
 
   const handleResetQuery = React.useCallback(
-    async (_e: KeyboardEvent) => {
+    async (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.altKey) {
+        return;
+      }
+
       setToast({ text: "Refetching last executed query..." });
       await queryClient.invalidateQueries("getNetwork");
       setToast({ text: "Refetching finished!" });
@@ -156,7 +171,11 @@ const ViewerCanvasComponent: React.FC<ViewerCanvasComponentProps> = ({
   );
 
   const handleClearQuery = React.useCallback(
-    async (_e: KeyboardEvent) => {
+    async (e: KeyboardEvent) => {
+      if (!e.ctrlKey || !e.altKey) {
+        return;
+      }
+
       setToast({ text: "Clearing query..." });
       clearQuery();
       await queryClient.invalidateQueries("getNetwork");
@@ -166,7 +185,11 @@ const ViewerCanvasComponent: React.FC<ViewerCanvasComponentProps> = ({
 
   useKey(
     "r",
-    () => {
+    (e) => {
+      if (!e.ctrlKey || !e.altKey) {
+        return;
+      }
+
       setToast({ text: "Resetting viewport size..." });
       setDimensionCallback();
     },
@@ -176,6 +199,13 @@ const ViewerCanvasComponent: React.FC<ViewerCanvasComponentProps> = ({
 
   useKey("q", handleResetQuery);
   useKey("c", handleClearQuery);
+  useKey("d", (e) => {
+    if (!e.ctrlKey || !e.altKey) {
+      return;
+    }
+
+    resetSelected();
+  });
 
   const handleNodeClick = (id: string) => {
     setSelectedNode(id);
@@ -194,7 +224,7 @@ const ViewerCanvasComponent: React.FC<ViewerCanvasComponentProps> = ({
         staticGraphWithDragAndDrop: isStatic,
         ...dimensions,
       }),
-    [dimensions, isStatic]
+    [dimensions, isStatic, config]
   );
 
   const finalData = React.useMemo(() => {
@@ -209,7 +239,11 @@ const ViewerCanvasComponent: React.FC<ViewerCanvasComponentProps> = ({
   }, [placedData, selectedNode]);
 
   return (
-    <div ref={containerRef} className={styles.ViewerCanvasComponentContainer}>
+    <div
+      tabIndex={0}
+      ref={containerRef}
+      className={styles.ViewerCanvasComponentContainer}
+    >
       <Graph
         ref={viewerRef}
         onClickNode={handleNodeClick}

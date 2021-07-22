@@ -7,12 +7,15 @@ import "./App.css";
 import "inter-ui/inter.css";
 
 import MainLayout from "./components/MainLayout";
+import { useThemeStore } from "./data/theme";
 
 const queryClient = new QueryClient();
 
 function Application() {
+  const [value] = useThemeStore((state) => [state.theme]);
+
   return (
-    <GeistProvider themeType="dark">
+    <GeistProvider themeType={value}>
       <CssBaseline />
       <QueryClientProvider client={queryClient}>
         <MainLayout />

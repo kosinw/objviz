@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useTheme } from "@geist-ui/react";
+import { GeistUIThemes, useTheme } from "@geist-ui/react";
 
 import styles from "./Viewer.module.css";
 
@@ -26,7 +26,8 @@ const truncate = (target: string, length: number) => {
 // logic like this.
 const mapNetworkInfoToViewerFormat = (
   response: GetNetworkResponse | undefined | null,
-  limit: number = 100
+  limit: number = 100,
+  theme: GeistUIThemes
 ): ViewerGraphFormat => {
   const nodes: ViewerGraphNode[] = [];
   const links: GraphLink[] = [];
@@ -42,13 +43,23 @@ const mapNetworkInfoToViewerFormat = (
       continue;
     }
 
+    const deadNode = !network[key].name;
+
     nodes.push({
       id: key,
       type: network[key].type,
       dbid: network[key].id,
-      name: truncate(!!network[key].name ? network[key].name : "[no name]", 15),
-      color: key === "1" ? "#7928CA" : "#fff",
-      fontColor: key === "1" ? "#7928CA" : "#fff",
+      name: truncate(!deadNode ? network[key].name : "nil", 15),
+      color: deadNode
+        ? theme.palette.accents_4
+        : key === "0"
+        ? "#7928CA"
+        : theme.palette.foreground,
+      fontColor: deadNode
+        ? theme.palette.accents_4
+        : key === "0"
+        ? "#7928CA"
+        : theme.palette.foreground,
     });
 
     for (let i = 0; i < network[key].pointers_from.length; ++i) {
@@ -89,8 +100,8 @@ const ViewerLayout: React.FC = () => {
   }, [networkInfo, setClientState]);
 
   const finalData = React.useMemo(
-    () => mapNetworkInfoToViewerFormat(networkInfo, limit),
-    [networkInfo, limit]
+    () => mapNetworkInfoToViewerFormat(networkInfo, limit, theme),
+    [networkInfo, limit, theme]
   );
 
   if (!isAvailable || isNetworkLoading || !networkInfo) {

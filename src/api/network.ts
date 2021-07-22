@@ -21,6 +21,7 @@ export type GetNetworkRequest = {
   depthLimit: number;
   objectLimit: number;
   uri: string;
+  depthFirst: boolean;
 };
 
 export const getNetwork = async (

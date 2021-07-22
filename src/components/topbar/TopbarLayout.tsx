@@ -1,5 +1,6 @@
 import * as React from "react";
 import { useMeasure } from "react-use";
+import { useTheme } from "@geist-ui/react";
 import { useClientStore } from "../../data/client";
 
 import styles from "./Topbar.module.css";
@@ -9,6 +10,7 @@ import TopbarRightGroup from "./TopbarRightGroup";
 const TopbarLayout: React.FC = () => {
   const [ref, { height }] = useMeasure<HTMLElement>();
   const [set] = useClientStore((store) => [store.set]);
+  const theme = useTheme();
 
   React.useLayoutEffect(() => {
     set((draft) => {
@@ -17,7 +19,12 @@ const TopbarLayout: React.FC = () => {
   }, [height, set, ref]);
 
   return (
-    <header ref={ref} className={styles.TopbarLayout}>
+    <header
+      ref={ref}
+      className={`${styles.TopbarLayout} ${
+        theme.type === "light" ? styles.TopbarLayoutLight : ""
+      }`}
+    >
       <div className={styles.TopbarLayoutContentContainer}>
         <div className={styles.TopbarLayoutURIFormContainer}>
           <TopbarDatabaseURIForm />

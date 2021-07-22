@@ -16,7 +16,7 @@
 }
 
 .Resizer.ResizerLight.vertical {
-  background: #000;
+  background: #EAEAEA;
   opacity: 1;
   border-left: 4px solid rgba(255, 255, 255, 1);
   border-right: 4px solid rgba(255, 255, 255, 1);

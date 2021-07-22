@@ -6,7 +6,7 @@ import styles from "./Sidebar.module.css";
 import SidebarQueryCollapseForm from "./SidebarQueryCollapseForm";
 import SidebarSQLCollapseDisplay from "./SidebarSQLCollapseDisplay";
 import SidebarInspectCollapseTable from "./SidebarInspectCollapseTable";
-import SidebarConnectCollapseForm from "./SidebaConnectCollapseForm";
+import SidebarConnectCollapseForm from "./SidebarConnectCollapseForm";
 
 import { useClientStore } from "../../data/client";
 import { useURIStore } from "../../data/uri";
