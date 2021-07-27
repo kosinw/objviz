@@ -25,9 +25,11 @@ export const useNetworkData = () => {
   const queryInfo = useQuery(
     ["getNetwork", strippedQuery],
     async () => {
-      setToast({
-        text: "Sending visualization query to server...",
-      });
+      if (!!strippedQuery) {
+        setToast({
+          text: "Sending visualization query to server...",
+        });
+      }
 
       const response = await getNetwork(strippedQuery);
 

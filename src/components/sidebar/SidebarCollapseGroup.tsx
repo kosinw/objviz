@@ -7,6 +7,7 @@ import SidebarQueryCollapseForm from "./SidebarQueryCollapseForm";
 import SidebarSQLCollapseDisplay from "./SidebarSQLCollapseDisplay";
 import SidebarInspectCollapseTable from "./SidebarInspectCollapseTable";
 import SidebarConnectCollapseForm from "./SidebarConnectCollapseForm";
+import SidebarStatsCollapseView from "./SidebarStatsCollapseView";
 
 import { useClientStore } from "../../data/client";
 import { useURIStore } from "../../data/uri";
@@ -54,7 +55,6 @@ const SidebarInspectCollapseContainer: React.FC = () => {
   );
 };
 
-// TODO(kosi): Add content to stats container
 const SidebarStatsCollapseContainer: React.FC = () => {
   return (
     <Collapse
@@ -62,7 +62,7 @@ const SidebarStatsCollapseContainer: React.FC = () => {
       subtitle={<Text small>View statistics about dependency graph.</Text>}
     >
       <Text type="secondary" small>
-        To be implemented.
+        <SidebarStatsCollapseView />
       </Text>
     </Collapse>
   );

@@ -14,6 +14,9 @@ export type GetNetworkResponse = {
   sqlQueries: {
     [x: string]: boolean;
   };
+  statistics: {
+    [x: string]: any;
+  };
 };
 
 export type GetNetworkRequest = {

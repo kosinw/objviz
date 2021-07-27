@@ -69,7 +69,7 @@ const ViewerSubqueryBreadcrumbs: React.FC = () => {
           {queries.map((query, idx) => (
             <Breadcrumbs.Item
               onClick={(e) => onBreadcrumbClick(e, queries.length - idx - 1)}
-              href="#"
+              href={queries.length - idx > 1 ? "#" : undefined}
               key={query.id}
             >
               {query.type} ({query.name})
