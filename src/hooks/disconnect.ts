@@ -18,7 +18,7 @@ export const useClearQuery = () => {
 
 export const useDisconnect = () => {
   const [setURIStore] = useURIStore((store) => [store.set]);
-  const [setQueryStore] = useQueryStore((store) => [store.set]);
+  const { clearQuery } = useClearQuery();
   const [reset] = useSelectedStore((store) => [store.reset]);
 
   const [, setToast] = useToasts();
@@ -28,9 +28,7 @@ export const useDisconnect = () => {
       draft.uri = null;
     });
 
-    setQueryStore((draft) => {
-      draft.lastQuery = null;
-    });
+    clearQuery();
 
     reset();
 

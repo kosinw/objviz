@@ -54,11 +54,11 @@ const ViewerControlsCard: React.FC = () => {
 
   return (
     <StyledVisible visible={isVisible}>
-      <Card hoverable>
-        <StyledRow>
+      <Card shadow hoverable>
+        {/* <StyledRow>
           <Keyboard ctrl option>R</Keyboard>
           <RightText small>Reset viewport</RightText>
-        </StyledRow>
+        </StyledRow> */}
         <StyledRow>
           <Keyboard ctrl option>Q</Keyboard>
           <RightText small>Rerun last query</RightText>

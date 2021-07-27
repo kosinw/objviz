@@ -49,8 +49,8 @@ const SidebarQueryCollapseForm: React.FC = () => {
   } = useForm<SidebarQueryCollapseFormData>({
     mode: "onChange",
     defaultValues: {
-      id: lastQuery?.id,
-      type: lastQuery?.type,
+      id: !!lastQuery ? lastQuery?.id : undefined,
+      type: !!lastQuery ? lastQuery?.type : "",
       depthLimit: 2,
       objectLimit: 100,
       depthFirst: false,
@@ -75,8 +75,6 @@ const SidebarQueryCollapseForm: React.FC = () => {
   ) => {
     const params: GetNetworkRequest = Object.assign({}, data, {
       uri: currentRecord!,
-      objectLimit: 100,
-      depthLimit: 2,
     });
 
     setToast({
@@ -142,7 +140,7 @@ const SidebarQueryCollapseForm: React.FC = () => {
                 marginBottom: "10px",
               }}
             >
-              <Code>type</Code>&nbsp;(required)
+              <Code>type</Code>
             </Text>
             <AutoComplete
               status={!!errors.type ? "error" : "default"}
@@ -164,32 +162,38 @@ const SidebarQueryCollapseForm: React.FC = () => {
             placeholder="Enter id of object..."
             {...register("id", { required: true, valueAsNumber: true })}
           >
-            <Code>id</Code> (required)
+            <Code>id</Code>
           </Input>
         </Grid>
         <Grid xs>
           <Input
+            status={!!errors.depthLimit ? "error" : "default"}
             width="100%"
             disabled={isLoading || !data}
             placeholder="Enter depth limit of graph..."
-            {...register("depthLimit", { valueAsNumber: true })}
+            {...register("depthLimit", { required: true, valueAsNumber: true })}
           >
-            <Code>depthLimit</Code> (optional)
+            <Code>depthLimit</Code>
           </Input>
         </Grid>
         <Grid xs>
           <Input
+            status={!!errors.objectLimit ? "error" : "default"}
             width="100%"
             disabled={isLoading || !data}
             placeholder="Enter maximum objects of graph..."
-            {...register("objectLimit", { valueAsNumber: true })}
+            {...register("objectLimit", {
+              required: true,
+              valueAsNumber: true,
+            })}
           >
-            <Code>objectLimit</Code> (optional)
+            <Code>objectLimit</Code>
           </Input>
         </Grid>
         <Grid xs>
           <Checkbox
             width="100%"
+            initialChecked={!!lastQuery ? lastQuery?.depthFirst : false}
             disabled={isLoading || !data}
             checked={watch("depthFirst")}
             onChange={(value) => setValue("depthFirst", value.target.checked)}

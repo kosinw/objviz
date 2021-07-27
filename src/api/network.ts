@@ -4,6 +4,7 @@ export type GetNetworkResponse = {
   network: {
     [x: number]: {
       deleted: "0" | "1";
+      status: string;
       id: number;
       name: string;
       pointers_from: Array<number | null>;

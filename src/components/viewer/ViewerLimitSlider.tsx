@@ -8,12 +8,13 @@ const FixedPositionContainer = styled.div`
   position: absolute;
   left: calc(50% - 21rem);
   bottom: 3%;
-  opacity: 0%;
+  /* opacity: 0%; */
   width: 42rem;
   transition: opacity 0.3s cubic-bezier(0.12, 0, 0.39, 0);
 
   :hover {
-    opacity: 100%;
+    /* opacity: 100%; */
+    z-index: 999;
   }
 `;
 
@@ -41,7 +42,7 @@ const ViewerLimitSlider: React.FC<ViewerLimitSliderProps> = ({
             Object Limit
           </Text>
           <Slider
-            style={{ width: "75%", marginRight: 10 }}
+            style={{ width: "75%", marginRight: 10, zIndex: 1 }}
             step={5}
             min={5}
             value={limit}

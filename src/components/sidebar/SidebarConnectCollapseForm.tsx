@@ -9,7 +9,7 @@ import {
   useModal,
   useToasts,
 } from "@geist-ui/react";
-import { Plus, Edit } from "@geist-ui/react-icons";
+import { Plus, Edit, X } from "@geist-ui/react-icons";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 import styled from "styled-components";
@@ -32,7 +32,10 @@ export type SidebarConnectCollapseFormInputs = {
 };
 
 const SidebarConnectCollapseForm: React.FC = () => {
-  const presets = usePresetStore((state) => state.presets);
+  const [presets, setPresets] = usePresetStore((state) => [
+    state.presets,
+    state.set,
+  ]);
   const [, setToast] = useToasts();
   const { setVisible, bindings } = useModal(false);
   const queryClient = useQueryClient();
@@ -90,6 +93,16 @@ const SidebarConnectCollapseForm: React.FC = () => {
   ) => {
     setNextModifiedPreset("");
     setVisible(true);
+  };
+
+  const handleRemoveClick: React.MouseEventHandler<HTMLButtonElement> = (
+    _e
+  ) => {
+    const preset = getValues("preset");
+
+    setPresets((draft) => {
+      delete draft.presets[preset];
+    });
   };
 
   const handleModifyPresetClick: React.MouseEventHandler<HTMLButtonElement> = (
@@ -175,6 +188,17 @@ const SidebarConnectCollapseForm: React.FC = () => {
               style={{ width: "100%" }}
             >
               Modify Preset
+            </Button>
+          </Grid>
+          <Grid xs>
+            <Button
+              onClick={handleRemoveClick}
+              disabled={Object.keys(presets).length === 0}
+              type="error"
+              icon={<X />}
+              style={{ width: "100%" }}
+            >
+              Delete
             </Button>
           </Grid>
           <Grid xs>

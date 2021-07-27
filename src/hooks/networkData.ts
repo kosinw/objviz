@@ -7,12 +7,12 @@ export const useNetworkData = () => {
   const [lastQuery] = useQueryStore((store) => [store.lastQuery]);
 
   const queryInfo = useQuery(
-    ["getNetwork", lastQuery],
+    ["getNetwork", { ...lastQuery, prevQuery: undefined }],
     () => getNetwork(lastQuery),
     {
       staleTime: 180000, // 3 minutes
     }
   );
 
-  return { isAvailable: !!lastQuery, ...queryInfo };
+  return { ...queryInfo };
 };
