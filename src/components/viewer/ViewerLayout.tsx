@@ -7,6 +7,7 @@ import ViewerInactiveCover from "./ViewerInactiveCover";
 import ViewerCanvasComponent from "./ViewerCanvasComponent";
 import ViewerControlsCard from "./ViewerControlsCard";
 import ViewerLimitSlider from "./ViewerLimitSlider";
+import ViewerSubqueryBreadcrumbs from "./ViewerSubqueryBreadcrumbs";
 
 import { useVerifyURI } from "../../hooks/verifyURI";
 import { useNetworkData } from "../../hooks/networkData";
@@ -26,6 +27,7 @@ const ViewerLayoutContainer = styled.div<{ light: boolean }>`
   max-height: 100%;
   height: 100%;
   overflow: hidden;
+  position: relative;
 `;
 
 const ViewerLayout: React.FC = () => {
@@ -44,16 +46,20 @@ const ViewerLayout: React.FC = () => {
     });
   }, [networkInfo, setClientState]);
 
-  if (!networkInfo) {
+  const shouldntRender = React.useMemo(() => !networkInfo, [networkInfo]);
+
+  if (shouldntRender) {
     return (
       <ViewerLayoutContainer light={theme.type === "light"}>
         {isNetworkLoading ? (
           <ViewerInactiveCover
+            spinner
             title="Loading"
             subtitle="Thank you for your patience as we fetch your query."
           />
         ) : isLoading ? (
           <ViewerInactiveCover
+            spinner
             title="Loading"
             subtitle="Thank you for your patience as we verify your connection."
           />
@@ -74,7 +80,8 @@ const ViewerLayout: React.FC = () => {
 
   return (
     <ViewerLayoutContainer light={theme.type === "light"}>
-      <ViewerCanvasComponent networkInfo={networkInfo} limit={limit} />
+      <ViewerCanvasComponent networkInfo={networkInfo!} limit={limit} />
+      <ViewerSubqueryBreadcrumbs />
       <ViewerControlsCard />
       <ViewerLimitSlider limit={limit} setLimit={setLimit} />
     </ViewerLayoutContainer>

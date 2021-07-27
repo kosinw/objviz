@@ -216,10 +216,6 @@ const ViewerCanvasComponent: React.FC<ViewerCanvasComponentProps> = ({
   const viewerRef = React.useRef<any>(null);
   const { clearQuery } = useClearQuery();
 
-  React.useEffect(() => {
-    (window as any).viewerRef = viewerRef;
-  });
-
   const [_dimensions, setDimensions] = React.useState({
     width: 1000,
     height: 1000,
@@ -234,8 +230,7 @@ const ViewerCanvasComponent: React.FC<ViewerCanvasComponentProps> = ({
     state.sidebarWidth,
   ]);
 
-  const [queries, setQueries, lastQuery] = useQueryStore((state) => [
-    state.queries,
+  const [setQueries, lastQuery] = useQueryStore((state) => [
     state.set,
     state.lastQuery,
   ]);
@@ -307,10 +302,24 @@ const ViewerCanvasComponent: React.FC<ViewerCanvasComponentProps> = ({
       return;
     }
 
+    if (
+      "" + child.dbid === "" + lastQuery.id &&
+      child.type === lastQuery.type
+    ) {
+      setToast({
+        text: "Can't open subquery using parent node.",
+      });
+
+      return;
+    }
+
     const subquery: GetNetworkRequest = {
-      ...lastQuery,
+      depthFirst: lastQuery.depthFirst,
+      depthLimit: lastQuery.depthLimit,
       id: child.dbid,
       type: child.type,
+      objectLimit: lastQuery.objectLimit,
+      uri: lastQuery.uri,
     };
 
     setToast({
@@ -329,13 +338,26 @@ const ViewerCanvasComponent: React.FC<ViewerCanvasComponentProps> = ({
         return;
       }
 
-      setQueries((draft) => {
-        draft.lastQuery = { prevQuery: draft.lastQuery!, ...subquery };
-        setSelectedNode("0");
-        setSelectedMeta(child.dbid, child.type);
+      setToast({
+        text: "Visualization query was successful!",
       });
 
-      queryClient.setQueryData(["getNetwork", subquery], response);
+      setQueries((draft) => {
+        draft.lastQuery = {
+          ...subquery,
+          prevQuery: {
+            name: !!draft.lastQuery!.name
+              ? draft.lastQuery!.name
+              : networkInfo.network[0].name,
+            ...draft.lastQuery!,
+          },
+          name: response.network[0].name,
+        };
+
+        resetSelected();
+      });
+
+      queryClient.setQueryData(["getNetwork", subquery], () => response);
     } catch {
       setToast({
         type: "error",

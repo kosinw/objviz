@@ -99,7 +99,7 @@ const SidebarQueryCollapseForm: React.FC = () => {
         draft.lastQuery = params;
       });
 
-      queryClient.setQueryData(["getNetwork", params], response);
+      queryClient.setQueryData(["getNetwork", params], () => response);
 
       setToast({
         type: "success",

@@ -7,7 +7,7 @@ import styled from "styled-components";
 const FixedPositionContainer = styled.div`
   position: absolute;
   left: calc(50% - 21rem);
-  bottom: 3%;
+  bottom: 8%;
   /* opacity: 0%; */
   width: 42rem;
   transition: opacity 0.3s cubic-bezier(0.12, 0, 0.39, 0);
