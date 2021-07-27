@@ -8,17 +8,16 @@ import {
   Code,
   Grid,
   Checkbox,
-  useToasts,
 } from "@geist-ui/react";
 import { useVerifyURI } from "../../hooks/verifyURI";
-import { useQueryClient } from "react-query";
 import styled from "styled-components";
 
-import { getNetwork, GetNetworkRequest } from "../../api/network";
+import { GetNetworkRequest } from "../../api/network";
 import { useQueryStore } from "../../data/query";
 import { useTypes } from "../../hooks/types";
 import { useClearQuery } from "../../hooks/disconnect";
 import { AutoCompleteOptions } from "@geist-ui/react/dist/auto-complete/auto-complete";
+import { useNetworkData } from "../../hooks/networkData";
 
 export interface SidebarQueryCollapseFormData {
   type: string;
@@ -57,11 +56,11 @@ const SidebarQueryCollapseForm: React.FC = () => {
     },
   });
 
+  const { isLoading: loadingNetwork } = useNetworkData();
+
   const { data: types, isLoading: loadingTypes } = useTypes();
   const { clearQuery } = useClearQuery();
-  const [, setToast] = useToasts();
-  const { data, currentRecord, isLoading } = useVerifyURI();
-  const queryClient = useQueryClient();
+  const { data, currentRecord, isLoading: loadingURI } = useVerifyURI();
 
   const [options, setOptions] = React.useState<AutoCompleteOptions>([]);
 
@@ -77,40 +76,11 @@ const SidebarQueryCollapseForm: React.FC = () => {
       uri: currentRecord!,
     });
 
-    setToast({
-      text: "Sending visualization query to server...",
-    });
-
     clearQuery();
 
-    try {
-      const response = await getNetwork(params);
-
-      if (!response) {
-        setToast({
-          type: "error",
-          text: "Visualization query was not successful!",
-        });
-
-        return;
-      }
-
-      setQueryStore((draft) => {
-        draft.lastQuery = params;
-      });
-
-      queryClient.setQueryData(["getNetwork", params], () => response);
-
-      setToast({
-        type: "success",
-        text: "Visualization query was successful!",
-      });
-    } catch {
-      setToast({
-        type: "error",
-        text: "Visualization query was not successful!",
-      });
-    }
+    setQueryStore((draft) => {
+      draft.lastQuery = params;
+    });
   };
 
   const searchHandler = (currentValue: string) => {
@@ -146,7 +116,7 @@ const SidebarQueryCollapseForm: React.FC = () => {
               status={!!errors.type ? "error" : "default"}
               width="100%"
               initialValue={!!lastQuery ? lastQuery.type : ""}
-              disabled={isLoading || !data || loadingTypes}
+              disabled={loadingURI || !data || loadingTypes}
               onChange={(value) => setValue("type", value)}
               placeholder="Select type of object..."
               onSearch={searchHandler}
@@ -158,7 +128,7 @@ const SidebarQueryCollapseForm: React.FC = () => {
           <Input
             status={!!errors.id ? "error" : "default"}
             width="100%"
-            disabled={isLoading || !data}
+            disabled={loadingURI || !data}
             placeholder="Enter id of object..."
             {...register("id", { required: true, valueAsNumber: true })}
           >
@@ -169,7 +139,7 @@ const SidebarQueryCollapseForm: React.FC = () => {
           <Input
             status={!!errors.depthLimit ? "error" : "default"}
             width="100%"
-            disabled={isLoading || !data}
+            disabled={loadingURI || !data}
             placeholder="Enter depth limit of graph..."
             {...register("depthLimit", { required: true, valueAsNumber: true })}
           >
@@ -180,7 +150,7 @@ const SidebarQueryCollapseForm: React.FC = () => {
           <Input
             status={!!errors.objectLimit ? "error" : "default"}
             width="100%"
-            disabled={isLoading || !data}
+            disabled={loadingURI || !data}
             placeholder="Enter maximum objects of graph..."
             {...register("objectLimit", {
               required: true,
@@ -194,7 +164,7 @@ const SidebarQueryCollapseForm: React.FC = () => {
           <Checkbox
             width="100%"
             initialChecked={!!lastQuery ? lastQuery?.depthFirst : false}
-            disabled={isLoading || !data}
+            disabled={loadingURI || !data}
             checked={watch("depthFirst")}
             onChange={(value) => setValue("depthFirst", value.target.checked)}
             size="small"
@@ -205,8 +175,8 @@ const SidebarQueryCollapseForm: React.FC = () => {
         </Grid>
         <Grid justify="center" xs>
           <Button
-            loading={isSubmitting}
-            disabled={isSubmitting || isLoading || !data || !isValid}
+            loading={isSubmitting || loadingNetwork}
+            disabled={!isValid}
             style={{ width: "100%", marginTop: 10 }}
             htmlType="submit"
           >

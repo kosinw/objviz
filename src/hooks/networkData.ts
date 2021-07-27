@@ -1,10 +1,15 @@
 import { useQuery } from "react-query";
 import { getNetwork, GetNetworkRequest } from "../api/network";
+import { useToasts } from "@geist-ui/react";
 
 import { useQueryStore } from "../data/query";
 
 export const useNetworkData = () => {
-  const [lastQuery] = useQueryStore((store) => [store.lastQuery]);
+  const [lastQuery, setQueryStore] = useQueryStore((store) => [
+    store.lastQuery,
+    store.set,
+  ]);
+  const [, setToast] = useToasts();
 
   const strippedQuery: GetNetworkRequest | null = !!lastQuery
     ? {
@@ -19,9 +24,38 @@ export const useNetworkData = () => {
 
   const queryInfo = useQuery(
     ["getNetwork", strippedQuery],
-    () => getNetwork(strippedQuery),
+    async () => {
+      setToast({
+        text: "Sending visualization query to server...",
+      });
+
+      const response = await getNetwork(strippedQuery);
+
+      if (!response) {
+        return response;
+      }
+      setToast({
+        type: "success",
+        text: "Visualization query was successful!",
+      });
+      return response;
+    },
     {
-      staleTime: 180000, // 3 minutes
+      staleTime: 900000, // 5 minutes
+      onError: () => {
+        setQueryStore((draft) => {
+          if (draft.lastQuery === null) {
+            return;
+          }
+
+          draft.lastQuery = null;
+
+          setToast({
+            type: "error",
+            text: "Visualization query was not successful!",
+          });
+        });
+      },
     }
   );
 

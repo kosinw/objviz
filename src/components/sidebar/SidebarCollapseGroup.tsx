@@ -46,7 +46,6 @@ const SidebarQueryCollapseContainer: React.FC = () => {
 const SidebarInspectCollapseContainer: React.FC = () => {
   return (
     <Collapse
-      className={styles.SidebarInspectCollapseContainer}
       title="Inspect"
       subtitle={<Text small>Click on any object for more information.</Text>}
     >

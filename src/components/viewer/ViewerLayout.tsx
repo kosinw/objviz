@@ -32,10 +32,11 @@ const ViewerLayoutContainer = styled.div<{ light: boolean }>`
 
 const ViewerLayout: React.FC = () => {
   const theme = useTheme();
-  const { isLoading, data } = useVerifyURI();
+  const { isLoading: isURILoading, data: uriInfo } = useVerifyURI();
   const { isLoading: isNetworkLoading, data: networkInfo } = useNetworkData();
   const [setClientState] = useClientStore((store) => [store.set]);
   const [limit, setLimit] = React.useState<number>(10);
+  const [playing, setPlaying] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     setClientState((draft) => {
@@ -55,15 +56,15 @@ const ViewerLayout: React.FC = () => {
           <ViewerInactiveCover
             spinner
             title="Loading"
-            subtitle="Thank you for your patience as we fetch your query."
+            subtitle="Thank you for your patience as we fetch your query results."
           />
-        ) : isLoading ? (
+        ) : isURILoading ? (
           <ViewerInactiveCover
             spinner
             title="Loading"
             subtitle="Thank you for your patience as we verify your connection."
           />
-        ) : !data ? (
+        ) : !uriInfo ? (
           <ViewerInactiveCover
             title="Not Connected"
             subtitle="Connect to Postgres database to begin visualizing object dependencies."
@@ -80,9 +81,14 @@ const ViewerLayout: React.FC = () => {
 
   return (
     <ViewerLayoutContainer light={theme.type === "light"}>
-      <ViewerCanvasComponent networkInfo={networkInfo!} limit={limit} />
+      <ViewerCanvasComponent
+        playing={playing}
+        setPlaying={setPlaying}
+        networkInfo={networkInfo!}
+        limit={limit}
+      />
       <ViewerSubqueryBreadcrumbs />
-      <ViewerControlsCard />
+      <ViewerControlsCard playing={playing} setPlaying={setPlaying} />
       <ViewerLimitSlider limit={limit} setLimit={setLimit} />
     </ViewerLayoutContainer>
   );

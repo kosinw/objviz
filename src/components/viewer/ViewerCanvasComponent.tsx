@@ -15,13 +15,9 @@ import { useQueryClient } from "react-query";
 import { useKey, useWindowSize, useThrottle } from "react-use";
 import { useClientStore } from "../../data/client";
 import { useClearQuery } from "../../hooks/disconnect";
-import {
-  getNetwork,
-  GetNetworkRequest,
-  GetNetworkResponse,
-} from "../../api/network";
+import { GetNetworkResponse } from "../../api/network";
 import { useThemeStore } from "../../data/theme";
-import { useQueryStore } from "../../data/query";
+import { QueryTree, useQueryStore } from "../../data/query";
 
 export type ViewerGraphNode = {
   id: string;
@@ -44,6 +40,8 @@ export type ViewerGraphFormat = GraphData<ViewerGraphNode, GraphLink>;
 export type ViewerCanvasComponentProps = {
   networkInfo: GetNetworkResponse;
   limit: number;
+  playing: boolean;
+  setPlaying: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const setupInitialPositions = (
@@ -67,10 +65,6 @@ const mapNetworkInfoToViewerFormat = (
   limit: number = 100,
   theme: GeistUIThemes
 ): ViewerGraphFormat => {
-  const truncate = (target: string, length: number) => {
-    return target.substring(0, length) + (length < target.length ? "..." : "");
-  };
-
   const nodes: ViewerGraphNode[] = [];
   const links: GraphLink[] = [];
 
@@ -117,7 +111,7 @@ const mapNetworkInfoToViewerFormat = (
       id: key,
       type: network[key].type,
       dbid: network[key].id,
-      name: truncate(!!network[key].name ? network[key].name : "", 15),
+      name: !!network[key].name ? network[key].name : "",
       color,
       fontColor: color,
     });
@@ -145,6 +139,8 @@ const mapNetworkInfoToViewerFormat = (
 const ViewerCanvasComponent: React.FC<ViewerCanvasComponentProps> = ({
   networkInfo,
   limit,
+  playing,
+  setPlaying
 }) => {
   const theme = useTheme();
   const themeStatus = useThemeStore((state) => state.theme);
@@ -162,13 +158,13 @@ const ViewerCanvasComponent: React.FC<ViewerCanvasComponentProps> = ({
         maxZoom: 8,
         minZoom: 0.5,
         panAndZoom: false,
-        staticGraphWithDragAndDrop: true,
+        staticGraphWithDragAndDrop: playing ? false : true,
         d3: {
           alphaTarget: 0.05,
           gravity: -200,
           linkLength: 200,
           linkStrength: 1,
-          disableLinkForce: true,
+          disableLinkForce: playing ? undefined : true,
         },
         node: {
           color: theme.palette.foreground,
@@ -181,7 +177,9 @@ const ViewerCanvasComponent: React.FC<ViewerCanvasComponentProps> = ({
           highlightStrokeColor: theme.palette.successLight,
           highlightStrokeWidth: "SAME",
           labelProperty: (node: ViewerGraphNode) =>
-            !!node.name ? `${node.type} (${node.name})` : node.type,
+            !!node.name
+              ? `${node.type} (${truncate(node.name, 20)})`
+              : node.type,
           mouseCursor: "pointer",
           opacity: 1,
           renderLabel: true,
@@ -209,7 +207,7 @@ const ViewerCanvasComponent: React.FC<ViewerCanvasComponentProps> = ({
         },
       }),
       // eslint-disable-next-line
-      [themeStatus, theme]
+      [themeStatus, theme, playing]
     );
 
   const containerRef = React.useRef<HTMLDivElement>(null);
@@ -263,7 +261,6 @@ const ViewerCanvasComponent: React.FC<ViewerCanvasComponentProps> = ({
     resetSelected();
     setToast({ text: "Refetching last executed query..." });
     await queryClient.invalidateQueries("getNetwork");
-    setToast({ text: "Refetching finished!" });
   });
 
   useKey("c", async (e) => {
@@ -283,6 +280,10 @@ const ViewerCanvasComponent: React.FC<ViewerCanvasComponentProps> = ({
 
     resetSelected();
   });
+
+  const truncate = (target: string, length: number) => {
+    return target.substring(0, length) + (length < target.length ? "..." : "");
+  };
 
   const handleNodeClick = (id: string) => {
     setSelectedNode(id);
@@ -313,57 +314,26 @@ const ViewerCanvasComponent: React.FC<ViewerCanvasComponentProps> = ({
       return;
     }
 
-    const subquery: GetNetworkRequest = {
-      depthFirst: lastQuery.depthFirst,
-      depthLimit: lastQuery.depthLimit,
+    const subquery: QueryTree = {
+      ...lastQuery,
       id: child.dbid,
       type: child.type,
-      objectLimit: lastQuery.objectLimit,
-      uri: lastQuery.uri,
     };
 
-    setToast({
-      text: "Sending visualization query to server...",
+    setQueries((draft) => {
+      draft.lastQuery = {
+        ...subquery,
+        prevQuery: {
+          name: !!draft.lastQuery!.name
+            ? draft.lastQuery!.name
+            : networkInfo.network[0].name,
+          ...draft.lastQuery!,
+        },
+        name: child.name,
+      };
+
+      resetSelected();
     });
-
-    try {
-      const response = await getNetwork(subquery);
-
-      if (!response) {
-        setToast({
-          type: "error",
-          text: "Visualization query was not successful!",
-        });
-
-        return;
-      }
-
-      setToast({
-        text: "Visualization query was successful!",
-      });
-
-      setQueries((draft) => {
-        draft.lastQuery = {
-          ...subquery,
-          prevQuery: {
-            name: !!draft.lastQuery!.name
-              ? draft.lastQuery!.name
-              : networkInfo.network[0].name,
-            ...draft.lastQuery!,
-          },
-          name: response.network[0].name,
-        };
-
-        resetSelected();
-      });
-
-      queryClient.setQueryData(["getNetwork", subquery], () => response);
-    } catch {
-      setToast({
-        type: "error",
-        text: "Visualization query was not successful!",
-      });
-    }
   };
 
   const finalConfig = React.useMemo(

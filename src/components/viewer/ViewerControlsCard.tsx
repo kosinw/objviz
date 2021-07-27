@@ -1,6 +1,7 @@
 import * as React from "react";
 
-import { Card, Text, Keyboard, Row } from "@geist-ui/react";
+import { Card, Text, Keyboard, Row, Button } from "@geist-ui/react";
+import { Play, Pause } from "@geist-ui/react-icons";
 import Visible from "../common/Visible";
 
 import styled from "styled-components";
@@ -31,8 +32,17 @@ const RightText = styled(Text)`
   justify-content: center;
 `;
 
-const ViewerControlsCard: React.FC = () => {
+export type ViewerControlsCardProps = {
+  playing: boolean;
+  setPlaying: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+const ViewerControlsCard: React.FC<ViewerControlsCardProps> = ({
+  playing,
+  setPlaying,
+}) => {
   const [isVisible, setVisible] = React.useState<boolean>(true);
+  const cancelPlay = React.useRef<NodeJS.Timeout>();
 
   const handleKeyPress = React.useCallback(
     (e: KeyboardEvent) => {
@@ -52,27 +62,58 @@ const ViewerControlsCard: React.FC = () => {
 
   useKey("t", handleKeyPress);
 
+  const handlePlayAnimation = () => {
+    if (playing === false) {
+      setPlaying(true);
+
+      // NOTE(kosi): Make this configurable somewhere, rn just hard coded at 5 seconds
+      cancelPlay.current = setTimeout(() => {
+        setPlaying(false);
+      }, 5000);
+    } else {
+      if (!!cancelPlay.current) {
+        setPlaying(false);
+        clearTimeout(cancelPlay.current);
+      }
+    }
+  };
+
   return (
     <StyledVisible visible={isVisible}>
       <Card shadow hoverable>
-        {/* <StyledRow>
-          <Keyboard ctrl option>R</Keyboard>
-          <RightText small>Reset viewport</RightText>
-        </StyledRow> */}
+        <StyledRow style={{ marginBottom: 20 }}>
+          <Button
+            icon={playing ? <Pause /> : <Play />}
+            onClick={() => handlePlayAnimation()}
+            style={{ width: "100%" }}
+            size="mini"
+            type="secondary-light"
+          >
+            {playing ? "Pause" : "Play"} animation
+          </Button>
+        </StyledRow>
         <StyledRow>
-          <Keyboard ctrl option>Q</Keyboard>
+          <Keyboard ctrl option>
+            Q
+          </Keyboard>
           <RightText small>Rerun last query</RightText>
         </StyledRow>
         <StyledRow>
-          <Keyboard ctrl option>T</Keyboard>
+          <Keyboard ctrl option>
+            T
+          </Keyboard>
           <RightText small>Toggle this menu</RightText>
         </StyledRow>
         <StyledRow>
-          <Keyboard ctrl option>C</Keyboard>
+          <Keyboard ctrl option>
+            C
+          </Keyboard>
           <RightText small>Clear current query</RightText>
         </StyledRow>
         <StyledRow>
-          <Keyboard ctrl option>D</Keyboard>
+          <Keyboard ctrl option>
+            D
+          </Keyboard>
           <RightText small>Deselect selected node</RightText>
         </StyledRow>
       </Card>

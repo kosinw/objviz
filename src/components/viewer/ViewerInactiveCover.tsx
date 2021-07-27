@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Text, Spinner } from "@geist-ui/react";
 
-import styles from "./Viewer.module.css";
+import styled from "styled-components";
 
 export interface ViewerInactiveCoverProps {
   title: string;
@@ -9,18 +9,28 @@ export interface ViewerInactiveCoverProps {
   spinner?: boolean;
 }
 
+const ViewerInactiveCoverContainer = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+`;
+
 const ViewerInactiveCover: React.FC<ViewerInactiveCoverProps> = ({
   title,
   subtitle,
   spinner = false,
 }) => {
   return (
-    <div className={styles.ViewerInactiveCover}>
+    <ViewerInactiveCoverContainer>
       <Text h1>{title} {!!spinner && <Spinner size="large" style={{ display: "inline-flex" }} />}</Text>
-      <Text className={styles.ViewerInactiveCoverSubtitle} type="secondary" p>
+      <Text style={{ margin: 0 }} type="secondary" p>
         {subtitle}
       </Text>
-    </div>
+    </ViewerInactiveCoverContainer>
   );
 };
 
