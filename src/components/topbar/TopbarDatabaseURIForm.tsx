@@ -2,7 +2,6 @@ import * as React from "react";
 import { Input } from "@geist-ui/react";
 import { ArrowRight } from "@geist-ui/react-icons";
 
-import styles from "./Topbar.module.css";
 import { useURIStore } from "../../data/uri";
 import { useURIForm, UseURIFormData } from "../../hooks/uriForm";
 
@@ -28,8 +27,8 @@ const TopbarDatabaseURIForm: React.FC = () => {
 
   return (
     <Input
+      style={{ maxWidth: "1200px" }}
       disabled={!!currentRecord}
-      className={styles.TopbarDatabaseURIForm}
       placeholder="Enter PostgreSQL database URI..."
       label="Database URI"
       width="100%"

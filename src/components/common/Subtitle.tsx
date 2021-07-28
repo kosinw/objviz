@@ -1,24 +1,27 @@
 import * as React from "react";
 import { Text } from "@geist-ui/react";
-import styles from "./Subtitle.module.css";
+
+import styled from "styled-components";
 
 export interface SubtitleProps {
   value?: string;
 }
 
-/**
- * Subtitle text component. Used as text styling for second line of modals and top of sidebar.
- *
- * @param {object} props Component props
- * @param {string} props.value Value of subtitle
- */
+const SubtitleContainer = styled(Text)`
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 1.8px;
+  margin: 9pt 0;
+  display: block;
+`;
+
 const Subtitle: React.FC<SubtitleProps> = ({
   value = "Database Object Visualizer",
 }) => {
   return (
-    <Text span type="secondary" className={styles.Subtitle}>
+    <SubtitleContainer span type="secondary">
       {value}
-    </Text>
+    </SubtitleContainer>
   );
 };
 

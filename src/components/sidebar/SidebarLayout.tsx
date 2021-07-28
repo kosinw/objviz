@@ -1,12 +1,46 @@
 import * as React from "react";
 import { Grid } from "@geist-ui/react";
 
-import styles from "./Sidebar.module.css";
 import Subtitle from "../common/Subtitle";
 import SidebarCollapseGroup from "./SidebarCollapseGroup";
 
 import { useMeasure } from "react-use";
 import { useClientStore } from "../../data/client";
+import styled from "styled-components";
+
+const SidebarLayoutContainer = styled.aside`
+  padding: 16pt;
+  height: 100%;
+  display: block;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  position: relative;
+  overflow-y: hidden;
+`;
+
+const SidebarLayoutInnerContainer = styled.div`
+  flex-direction: column;
+  display: flex;
+  height: 100%;
+  max-width: 550px;
+  margin: 0 auto;
+`;
+
+const SubtitleContainer = styled(Grid)`
+  text-align: center;
+`;
+
+const SidebarCollapseGroupContainer = styled(Grid)`
+  overflow: hidden auto;
+  height: 100%;
+  padding: 0 !important;
+  scrollbar-width: none;
+
+  ::-webkit-scrollbar {
+    width: 0px;
+    background-color: transparent;
+  }
+`;
 
 const SidebarLayout: React.FC = () => {
   const [ref, { width }] = useMeasure<HTMLElement>();
@@ -19,27 +53,22 @@ const SidebarLayout: React.FC = () => {
   }, [width, set, ref]);
 
   return (
-    <aside ref={ref} className={styles.SidebarLayoutContainer}>
-      <div className={styles.SidebarLayout}>
+    <SidebarLayoutContainer>
+      <SidebarLayoutInnerContainer>
         <Grid.Container
-          className={styles.SidebarLayoutTop}
           gap={2}
           direction="column"
-          style={{ minHeight: "200px" }}
+          style={{ minHeight: "200px", height: "100%" }}
         >
-          <Grid
-            className={styles.SubtitleContainer}
-            direction="row"
-            justify="center"
-          >
+          <SubtitleContainer direction="row" justify="center">
             <Subtitle />
-          </Grid>
-          <Grid className={styles.SidebarCollapseGroupContainer} xs>
+          </SubtitleContainer>
+          <SidebarCollapseGroupContainer xs>
             <SidebarCollapseGroup />
-          </Grid>
+          </SidebarCollapseGroupContainer>
         </Grid.Container>
-      </div>
-    </aside>
+      </SidebarLayoutInnerContainer>
+    </SidebarLayoutContainer>
   );
 };
 

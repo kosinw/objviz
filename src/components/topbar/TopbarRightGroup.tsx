@@ -5,20 +5,6 @@ import { Moon, Sun } from "@geist-ui/react-icons";
 import TopbarStatusIndicator from "./TopbarStatusIndicator";
 import { useThemeStore } from "../../data/theme";
 
-// import styled from "styled-components";
-
-// const QuestionCircleButton = styled(QuestionCircle)`
-//   :hover {
-//     cursor: pointer;
-//   }
-// `;
-
-// const MoreVerticalButton = styled(MoreVertical)`
-//   :hover {
-//     cursor: pointer;
-//   }
-// `;
-
 const TopbarRightThemeButton: React.FC = () => {
   const [value, setValue] = useThemeStore(store => [store.theme, store.set]);
 

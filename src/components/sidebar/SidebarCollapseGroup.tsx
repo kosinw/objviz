@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Collapse, Text } from "@geist-ui/react";
 
-import styles from "./Sidebar.module.css";
+import styled from "styled-components";
 
 import SidebarQueryCollapseForm from "./SidebarQueryCollapseForm";
 import SidebarSQLCollapseDisplay from "./SidebarSQLCollapseDisplay";
@@ -11,6 +11,10 @@ import SidebarStatsCollapseView from "./SidebarStatsCollapseView";
 
 import { useClientStore } from "../../data/client";
 import { useURIStore } from "../../data/uri";
+
+const SidebarCollapseGroupContainer = styled(Collapse.Group)`
+  width: 100% !important;
+`;
 
 const SidebarConnectCollapseContainer: React.FC = () => {
   const uri = useURIStore((state) => state.uri);
@@ -84,13 +88,13 @@ const SidebarSQLCollapseContainer: React.FC = () => {
 
 const SidebarCollapseGroup: React.FC = () => {
   return (
-    <Collapse.Group className={styles.SidebarCollapseGroup}>
+    <SidebarCollapseGroupContainer>
       <SidebarConnectCollapseContainer />
       <SidebarQueryCollapseContainer />
       <SidebarInspectCollapseContainer />
       <SidebarStatsCollapseContainer />
       <SidebarSQLCollapseContainer />
-    </Collapse.Group>
+    </SidebarCollapseGroupContainer>
   );
 };
 
