@@ -53,7 +53,7 @@ const SidebarLayout: React.FC = () => {
   }, [width, set, ref]);
 
   return (
-    <SidebarLayoutContainer>
+    <SidebarLayoutContainer ref={ref}>
       <SidebarLayoutInnerContainer>
         <Grid.Container
           gap={2}

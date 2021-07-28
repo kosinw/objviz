@@ -89,7 +89,11 @@ const ViewerLayout: React.FC = () => {
       />
       <ViewerSubqueryBreadcrumbs />
       <ViewerControlsCard playing={playing} setPlaying={setPlaying} />
-      <ViewerLimitSlider limit={limit} setLimit={setLimit} />
+      <ViewerLimitSlider
+        max={Object.keys(networkInfo?.network!).length}
+        limit={limit}
+        setLimit={setLimit}
+      />
     </ViewerLayoutContainer>
   );
 };

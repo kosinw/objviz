@@ -4,8 +4,9 @@ import styled from "styled-components";
 import { QueryTree, useQueryStore } from "../../data/query";
 import { useSelectedStore } from "../../data/selection";
 
-const ViewerSubqueryBreadcrumbsContainer = styled.div`
+const Container = styled.div`
   position: absolute;
+  width: 100%;
   /* top: 2%; */
   top: 0;
   left: 0;
@@ -63,8 +64,8 @@ const ViewerSubqueryBreadcrumbs: React.FC = () => {
   };
 
   return queries.length > 1 ? (
-    <ViewerSubqueryBreadcrumbsContainer>
-      <Card style={{ border: "none", backgroundColor: "transparent" }}>
+    <Container>
+      <Card style={{ border: "none", width: "100%", borderRadius: 0 }}>
         <Breadcrumbs size="small">
           {queries.map((query, idx) => (
             <Breadcrumbs.Item
@@ -72,12 +73,12 @@ const ViewerSubqueryBreadcrumbs: React.FC = () => {
               href={queries.length - idx > 1 ? "#" : undefined}
               key={query.id}
             >
-              {query.type} ({query.name})
+              {!!query.name ? `${query.type} (${query.name})` : `${query.type}`}
             </Breadcrumbs.Item>
           ))}
         </Breadcrumbs>
       </Card>
-    </ViewerSubqueryBreadcrumbsContainer>
+    </Container>
   ) : (
     <React.Fragment />
   );

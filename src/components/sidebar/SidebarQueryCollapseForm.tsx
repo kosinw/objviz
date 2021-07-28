@@ -183,6 +183,24 @@ const SidebarQueryCollapseForm: React.FC = () => {
             Submit
           </Button>
         </Grid>
+        <Grid
+          style={{
+            display: !lastQuery || !loadingNetwork ? "none" : "block",
+          }}
+          justify="center"
+          xs
+        >
+          <Button
+            style={{ width: "100%", marginTop: 10 }}
+            onClick={() =>
+              setQueryStore((draft) => {
+                draft.lastQuery = null;
+              })
+            }
+          >
+            Cancel Query
+          </Button>
+        </Grid>
       </Grid.Container>
     </form>
   );

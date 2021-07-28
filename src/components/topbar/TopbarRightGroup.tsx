@@ -6,7 +6,7 @@ import TopbarStatusIndicator from "./TopbarStatusIndicator";
 import { useThemeStore } from "../../data/theme";
 
 const TopbarRightThemeButton: React.FC = () => {
-  const [value, setValue] = useThemeStore(store => [store.theme, store.set]);
+  const [value, setValue] = useThemeStore((store) => [store.theme, store.set]);
 
   return (
     <Button
@@ -25,12 +25,11 @@ const TopbarRightGroup: React.FC = () => {
       <Grid
         style={{ display: "flex", userSelect: "none" }}
         alignItems="center"
-        md
-        xs={0}
+        xs
       >
-        <TopbarStatusIndicator />
+          <TopbarStatusIndicator />
       </Grid>
-      <Grid style={{ display: "flex" }} alignItems="center" md>
+      <Grid style={{ display: "flex" }} alignItems="center" xs>
         <TopbarRightThemeButton />
       </Grid>
     </Grid.Container>

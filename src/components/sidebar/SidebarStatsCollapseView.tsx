@@ -20,11 +20,15 @@ const SidebarStatsCollapseView: React.FC = () => {
           <Tree.File
             key={key}
             name={key.replaceAll("_", " ")}
-            extra={"" + value}
+            extra={"" + truncateDecimals(value * 100) / 100}
           />
         );
       }
     });
+  };
+
+  const truncateDecimals = (n: number) => {
+    return Math[n < 0 ? "ceil" : "floor"](n);
   };
 
   return isLoading ? (
@@ -36,11 +40,7 @@ const SidebarStatsCollapseView: React.FC = () => {
       Enter a query to view statistics.
     </Text>
   ) : (
-    <Tree>
-      <Tree.Folder name="root">
-        {constructStatsTree(data.statistics)}
-      </Tree.Folder>
-    </Tree>
+    <Tree>{constructStatsTree(data.statistics)}</Tree>
   );
 };
 

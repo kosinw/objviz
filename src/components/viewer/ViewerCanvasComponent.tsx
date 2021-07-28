@@ -103,7 +103,7 @@ const mapNetworkInfoToViewerFormat = (
       color = theme.palette.errorLight;
     }
 
-    if (network[key].status !== "Active" && key !== "0") {
+    if (network[key].status === "Inactive" && key !== "0") {
       color = theme.palette.accents_3;
     }
 

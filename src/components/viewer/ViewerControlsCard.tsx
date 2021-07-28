@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import { Card, Text, Keyboard, Row, Button } from "@geist-ui/react";
-import { Play, Pause } from "@geist-ui/react-icons";
+import { Play, Square } from "@geist-ui/react-icons";
 import Visible from "../common/Visible";
 
 import styled from "styled-components";
@@ -42,7 +42,7 @@ const ViewerControlsCard: React.FC<ViewerControlsCardProps> = ({
   setPlaying,
 }) => {
   const [isVisible, setVisible] = React.useState<boolean>(true);
-  const cancelPlay = React.useRef<NodeJS.Timeout>();
+  // const cancelPlay = React.useRef<NodeJS.Timeout>();
 
   const handleKeyPress = React.useCallback(
     (e: KeyboardEvent) => {
@@ -67,14 +67,15 @@ const ViewerControlsCard: React.FC<ViewerControlsCardProps> = ({
       setPlaying(true);
 
       // NOTE(kosi): Make this configurable somewhere, rn just hard coded at 5 seconds
-      cancelPlay.current = setTimeout(() => {
-        setPlaying(false);
-      }, 5000);
+      // cancelPlay.current = setTimeout(() => {
+      //   setPlaying(false);
+      // }, 5000);
     } else {
-      if (!!cancelPlay.current) {
-        setPlaying(false);
-        clearTimeout(cancelPlay.current);
-      }
+      setPlaying(false);
+      // if (!!cancelPlay.current) {
+      //   setPlaying(false);
+      //   clearTimeout(cancelPlay.current);
+      // }
     }
   };
 
@@ -83,13 +84,13 @@ const ViewerControlsCard: React.FC<ViewerControlsCardProps> = ({
       <Card shadow hoverable>
         <StyledRow style={{ marginBottom: 20 }}>
           <Button
-            icon={playing ? <Pause /> : <Play />}
+            icon={playing ? <Square /> : <Play />}
             onClick={() => handlePlayAnimation()}
             style={{ width: "100%" }}
             size="mini"
             type="secondary-light"
           >
-            {playing ? "Pause" : "Play"} animation
+            {playing ? "Stop" : "Play"} animation
           </Button>
         </StyledRow>
         <StyledRow>

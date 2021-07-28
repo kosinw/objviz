@@ -28,11 +28,13 @@ const SliderContainer = styled.div`
 export type ViewerLimitSliderProps = {
   limit: number;
   setLimit: React.Dispatch<number>;
+  max?: number;
 };
 
 const ViewerLimitSlider: React.FC<ViewerLimitSliderProps> = ({
   limit,
   setLimit,
+  max = 100,
 }) => {
   return (
     <FixedPositionContainer>
@@ -48,7 +50,7 @@ const ViewerLimitSlider: React.FC<ViewerLimitSliderProps> = ({
             value={limit}
             onChange={setLimit}
             initialValue={10}
-            max={100}
+            max={Math.max(max, 100)}
             showMarkers
           />
         </SliderContainer>

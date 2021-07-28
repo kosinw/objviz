@@ -4,8 +4,13 @@ import { ArrowRight } from "@geist-ui/react-icons";
 
 import { useURIStore } from "../../data/uri";
 import { useURIForm, UseURIFormData } from "../../hooks/uriForm";
+import styled from "styled-components";
 
 // TODO(kosi): Add autocomplete functionality when searching for database URIs
+const StyledInput = styled(Input)`
+  max-width: "1200px";
+`;
+
 const TopbarDatabaseURIForm: React.FC = () => {
   const [currentRecord] = useURIStore((state) => [state.uri]);
 
@@ -26,8 +31,7 @@ const TopbarDatabaseURIForm: React.FC = () => {
   }, [reset, currentRecord]);
 
   return (
-    <Input
-      style={{ maxWidth: "1200px" }}
+    <StyledInput
       disabled={!!currentRecord}
       placeholder="Enter PostgreSQL database URI..."
       label="Database URI"
