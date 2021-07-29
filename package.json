@@ -31,7 +31,9 @@
   },
   "proxy": "http://localhost:5000",
   "scripts": {
-    "start": "react-scripts start",
+    "start:client": "react-scripts start",
+    "start:server": "python backend/api.py",
+    "start": "concurrently \"npm:start:client\" \"npm:start:server\"",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -53,5 +55,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "concurrently": "^6.2.0"
   }
 }
