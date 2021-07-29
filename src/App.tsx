@@ -1,7 +1,7 @@
 import * as React from "react";
 import { GeistProvider, CssBaseline } from "@geist-ui/react";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { ReactQueryDevtools } from "react-query/devtools";
+// import { ReactQueryDevtools } from "react-query/devtools";
 
 import "./App.css";
 import "inter-ui/inter.css";
@@ -19,7 +19,7 @@ function Application() {
       <CssBaseline />
       <QueryClientProvider client={queryClient}>
         <MainLayout />
-        <ReactQueryDevtools />
+        {/* <ReactQueryDevtools /> */}
       </QueryClientProvider>
     </GeistProvider>
   );

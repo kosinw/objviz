@@ -7,7 +7,7 @@ import {
   Button,
   Code,
   Grid,
-  Checkbox,
+  // Checkbox,
 } from "@geist-ui/react";
 import { useVerifyURI } from "../../hooks/verifyURI";
 import styled from "styled-components";
@@ -43,7 +43,7 @@ const SidebarQueryCollapseForm: React.FC = () => {
     register,
     handleSubmit,
     setValue,
-    watch,
+    // watch,
     formState: { errors, isSubmitting, isValid },
   } = useForm<SidebarQueryCollapseFormData>({
     mode: "onChange",
@@ -160,7 +160,8 @@ const SidebarQueryCollapseForm: React.FC = () => {
             <Code>objectLimit</Code>
           </Input>
         </Grid>
-        <Grid xs>
+        {/* NOTE(kosi): Depth-first query feature was planned, but due to performance issues is disabled for now. */}
+        {/* <Grid xs>
           <Checkbox
             width="100%"
             initialChecked={!!lastQuery ? lastQuery?.depthFirst : false}
@@ -172,7 +173,7 @@ const SidebarQueryCollapseForm: React.FC = () => {
           >
             <Code>depthFirst</Code>
           </Checkbox>
-        </Grid>
+        </Grid> */}
         <Grid justify="center" xs>
           <Button
             loading={isSubmitting || loadingNetwork}

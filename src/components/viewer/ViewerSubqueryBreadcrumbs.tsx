@@ -63,7 +63,7 @@ const ViewerSubqueryBreadcrumbs: React.FC = () => {
     });
   };
 
-  return queries.length > 1 ? (
+  return (
     <Container>
       <Card style={{ border: "none", width: "100%", borderRadius: 0 }}>
         <Breadcrumbs size="small">
@@ -79,8 +79,6 @@ const ViewerSubqueryBreadcrumbs: React.FC = () => {
         </Breadcrumbs>
       </Card>
     </Container>
-  ) : (
-    <React.Fragment />
   );
 };
 
